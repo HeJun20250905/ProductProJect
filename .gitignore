@@ -399,3 +399,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# 强制包含项目根目录下的所有文件夹及其内部的所有内容
+!*/
+!**/
