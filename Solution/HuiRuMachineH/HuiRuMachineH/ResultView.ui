@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ResultView</class>
+ <widget class="QDialog" name="ResultView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>273</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* ================== QPushButton &amp; QToolButton 开始 ================== */
+
+/* 按钮默认状态 */
+QPushButton, QToolButton {
+    border: 1px solid #c0c0c0;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #e0e0e0);
+    border-radius: 5px; 
+    outline: none;                  
+    padding: 0px;                   
+}
+
+/* 按钮鼠标悬停时 */
+QPushButton:hover, QToolButton:hover {
+    border: 1px solid #a0a0a0;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #d0d0d0);
+}
+
+/* 按钮鼠标按下时 */
+QPushButton:pressed, QToolButton:pressed {
+    border: 1px solid #808080;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #d0d0d0, stop:1 #e0e0e0);
+}
+
+/* ================== QLineEdit 开始 ================== */
+
+/* 默认状态 */
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #D0D0D0;     
+    border-radius: 4px;            
+    padding: 2px 2px;              
+    color: #222222;                
+    min-height: 20px;              
+}
+
+/* 获得焦点时 */
+QLineEdit:focus {
+    border: 1px solid #007AFF;     
+    background-color: #E8F4FF;     
+}
+
+/* 禁用状态 */
+QLineEdit:disabled {
+    background-color: #eef1f5;     
+    color: #9aa0a6;                
+    border: 1px solid #d3d8e0;     
+}
+
+/* ================== QTableWidget 开始 ================== */
+
+QTableWidget {
+    background-color: #ffffff;
+    border: 1px solid #c8cdd6;
+    border-radius: 5px;
+    gridline-color: #eef1f5;
+    selection-background-color: #eef1f5;
+    color: #222222;
+}
+
+QTableWidget::item {
+    padding: 2px 2px;
+}
+
+/* 表头样式（补充了右侧分割线） */
+QHeaderView::section {
+    background-color: #ffffff;
+    border: none;
+    border-bottom: 1px solid #c8cdd6;
+    border-right: 1px solid #eef1f5; /* ⚠️ 新增：给表头加上右侧分割线，区分不同列 */
+    padding: 2px 2px;
+    color: #222222;
+}
+
+/* ================== QGroupBox 开始 ================== */
+
+QGroupBox {
+    border: 1px solid #E0E0E0; 
+    border-radius: 5px; 
+    background-color: #FCFCFC; 
+    margin-top: 10px; /* ⚠️ 新增：给标题留出一点顶部空间 */
+}
+
+/* 分组框标题（补充了左右内边距） */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    color: #333333;
+    font-weight: bold;
+    background-color: #FCFCFC; 
+    padding: 0 5px; /* ⚠️ 新增：左右留出 5px 空间，让遮盖边框的效果更自然，文字不贴边 */
+}
+
+/* ================== QLabel 开始 ================== */
+
+QLabel {
+    color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+    font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+    background-color: #FCFCFC; /* 与分组框背景色一致 */
+    border: 1px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+    border-radius: 5px;       /* 相同的圆角 */
+    padding: 6px 10px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */
+}</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>381</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>181</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Ptr">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>30</y>
+      <width>66</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Ptr</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButton_Cancel">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>230</y>
+     <width>66</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_OK">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>230</y>
+     <width>66</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>230</y>
+     <width>221</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

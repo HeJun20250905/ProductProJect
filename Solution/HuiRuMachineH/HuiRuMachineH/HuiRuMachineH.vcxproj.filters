@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts</Extensions>
+    </Filter>
+    <Filter Include="ResultView">
+      <UniqueIdentifier>{c6871d49-24f9-43b2-9e5a-62ab38179293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MachineCore">
+      <UniqueIdentifier>{88aed825-dafc-4709-9829-f66fdd4f0ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{d601e4fe-b09a-4b6e-a6ae-a4af4d975851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{c3d0f9ea-3615-4026-bc65-b62e2e62689c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{466f0b71-e7bb-47e6-9386-9db7740224a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TaskList">
+      <UniqueIdentifier>{1e22fd52-24fc-4f00-baa6-a48f8413fa99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Type">
+      <UniqueIdentifier>{58e4486f-4d3f-4611-beba-29bbf6dffee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkThread">
+      <UniqueIdentifier>{14a632ad-0047-44f2-b6b7-dcb272036637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpatialCube">
+      <UniqueIdentifier>{fa034eed-d6fe-41e0-9f52-e1a878c83169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dictionary">
+      <UniqueIdentifier>{922787e8-2748-47f7-a8d5-07f5dcdd88a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feeder">
+      <UniqueIdentifier>{d44c2a31-8516-4177-a0bb-4c6c6a4dd6d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChildDialog">
+      <UniqueIdentifier>{06a160f7-ceda-4199-8c79-2a9c39b72455}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="MachineCore.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkThread.cpp">
+      <Filter>WorkThread</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultView.cpp">
+      <Filter>ResultView</Filter>
+    </ClCompile>
+    <ClCompile Include="MachineCore.cpp">
+      <Filter>MachineCore</Filter>
+    </ClCompile>
+    <ClCompile Include="HuiRuLoggerH.cpp">
+      <Filter>Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBase.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Library.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskList.cpp">
+      <Filter>TaskList</Filter>
+    </ClCompile>
+    <ClCompile Include="SpatialCube.cpp">
+      <Filter>SpatialCube</Filter>
+    </ClCompile>
+    <ClCompile Include="FeederPos.cpp">
+      <Filter>Feeder</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\DataDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\FileDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\LibraryDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\MotionDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\ParaDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\PCBDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\ToolDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildDialog\VisionDialog.cpp">
+      <Filter>ChildDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="WorkThread.h">
+      <Filter>WorkThread</Filter>
+    </QtMoc>
+    <QtMoc Include="ResultView.h">
+      <Filter>ResultView</Filter>
+    </QtMoc>
+    <QtMoc Include="MachineCore.h">
+      <Filter>MachineCore</Filter>
+    </QtMoc>
+    <QtMoc Include="HuiRuLoggerH.h">
+      <Filter>Logger</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\DataDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\FileDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\LibraryDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\MotionDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\ParaDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\PCBDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\ToolDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ChildDialog\VisionDialog.h">
+      <Filter>ChildDialog</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskList.h">
+      <Filter>TaskList</Filter>
+    </ClInclude>
+    <ClInclude Include="Library.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialCube.h">
+      <Filter>SpatialCube</Filter>
+    </ClInclude>
+    <ClInclude Include="FeederPos.h">
+      <Filter>Feeder</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HuiRuMachineH.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="ResultView.ui">
+      <Filter>ResultView</Filter>
+    </QtUic>
+    <QtUic Include="MachineCore.ui">
+      <Filter>MachineCore</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\DataDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\FileDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\LibraryDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\MotionDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\ParaDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\PCBDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\ToolDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+    <QtUic Include="ChildDialog\VisionDialog.ui">
+      <Filter>ChildDialog</Filter>
+    </QtUic>
+  </ItemGroup>
+</Project>

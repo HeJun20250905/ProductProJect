@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/MachineCore">
+        <file>Icon/Linux.png</file>
+        <file>Icon/Quit.png</file>
+        <file>Icon/Start.png</file>
+        <file>Icon/fa_0xf103.png</file>
+        <file>Icon/fa_0xf107.png</file>
+    </qresource>
+</RCC>

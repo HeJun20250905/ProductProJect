@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AF90282F-ED20-4858-BFDD-425C9DA58A59}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">10.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="QtSettings">
+    <QtInstall>5.14.2_msvc2017</QtInstall>
+    <QtModules>core;sql;gui;widgets</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="QtSettings">
+    <QtInstall>5.14.2_msvc2017</QtInstall>
+    <QtModules>core;sql;gui;widgets</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
+    <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
+    <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <OutputFile>..\..\..\Output\Win32\Debug\HuiRuMachineH.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Link>
+      <OutputFile>..\..\..\Output\Win32\Release\HuiRuMachineH.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="Configuration">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ChildDialog\DataDialog.cpp" />
+    <ClCompile Include="ChildDialog\FileDialog.cpp" />
+    <ClCompile Include="ChildDialog\LibraryDialog.cpp" />
+    <ClCompile Include="ChildDialog\MotionDialog.cpp" />
+    <ClCompile Include="ChildDialog\ParaDialog.cpp" />
+    <ClCompile Include="ChildDialog\PCBDialog.cpp" />
+    <ClCompile Include="ChildDialog\ToolDialog.cpp" />
+    <ClCompile Include="ChildDialog\VisionDialog.cpp" />
+    <ClCompile Include="DataBase.cpp" />
+    <ClCompile Include="FeederPos.cpp" />
+    <ClCompile Include="HuiRuLoggerH.cpp" />
+    <ClCompile Include="Library.cpp" />
+    <ClCompile Include="ResultView.cpp" />
+    <ClCompile Include="SpatialCube.cpp" />
+    <ClCompile Include="TaskList.cpp" />
+    <ClCompile Include="TestDialog.cpp" />
+    <ClCompile Include="WorkThread.cpp" />
+    <QtRcc Include="MachineCore.qrc" />
+    <QtUic Include="ChildDialog\DataDialog.ui" />
+    <QtUic Include="ChildDialog\FileDialog.ui" />
+    <QtUic Include="ChildDialog\LibraryDialog.ui" />
+    <QtUic Include="ChildDialog\MotionDialog.ui" />
+    <QtUic Include="ChildDialog\ParaDialog.ui" />
+    <QtUic Include="ChildDialog\PCBDialog.ui" />
+    <QtUic Include="ChildDialog\ToolDialog.ui" />
+    <QtUic Include="ChildDialog\VisionDialog.ui" />
+    <QtUic Include="MachineCore.ui" />
+    <QtMoc Include="MachineCore.h" />
+    <ClCompile Include="MachineCore.cpp" />
+    <ClCompile Include="main.cpp" />
+    <QtUic Include="ResultView.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="WorkThread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="ChildDialog\DataDialog.h" />
+    <QtMoc Include="ChildDialog\FileDialog.h" />
+    <QtMoc Include="ChildDialog\LibraryDialog.h" />
+    <QtMoc Include="ChildDialog\MotionDialog.h" />
+    <QtMoc Include="ChildDialog\ParaDialog.h" />
+    <QtMoc Include="ChildDialog\PCBDialog.h" />
+    <QtMoc Include="ChildDialog\ToolDialog.h" />
+    <QtMoc Include="ChildDialog\VisionDialog.h" />
+    <ClInclude Include="FeederPos.h" />
+    <ClInclude Include="SpatialCube.h" />
+    <ClInclude Include="TaskList.h" />
+    <ClInclude Include="TestDialog.h" />
+    <ClInclude Include="Type.h" />
+    <QtMoc Include="HuiRuLoggerH.h" />
+    <ClInclude Include="DataBase.h" />
+    <ClInclude Include="Library.h" />
+    <ClInclude Include="resource.h" />
+    <QtMoc Include="ResultView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HuiRuMachineH.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
