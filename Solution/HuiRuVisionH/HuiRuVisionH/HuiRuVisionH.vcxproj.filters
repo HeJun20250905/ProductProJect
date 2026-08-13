@@ -37,18 +37,13 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VisionCore_Export.h">
-      <Filter>Export</Filter>
+    <ClInclude Include="VisionCore.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HuiRuVisionH.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="VisionCore.h">
-      <Filter>Core</Filter>
-    </QtMoc>
   </ItemGroup>
 </Project>

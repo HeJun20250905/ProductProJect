@@ -1,29 +1,7 @@
-#include "VisionCore.h"
-
-#include "../../../Include/MVS/MvCameraControl.h"
-
+ï»¿#include "VisionCore.h"
 #include <QDebug>
-#include <QMessageBox>
 
-#include <process.h>
-
-// ¾ä±ú
-void* handle = nullptr;
-
-// Ã¶¾Ùµ½µÄÉè±¸ÁĞ±í
-MV_CC_DEVICE_INFO_LIST stDeviceList;
-
-// Éè±¸ĞÅÏ¢
-MV_CC_DEVICE_INFO* pDeviceInfo = nullptr;
-
-// Éè±¸²ÎÊı
-int nPktSize = 0;
-
-// ´æÍ¼ÏñÊı¾İµÄÄÚ´æ
-unsigned char* g_frameData = nullptr;
-
-// Í¼ÏñµÄ¿í¸ß¡¢ÏñËØ¸ñÊ½µÈĞÅÏ¢
-MV_FRAME_OUT_INFO_EX g_frameInfo = { 0 };
+#include <process.h>        // çº¿ç¨‹
 
 #ifdef _DEBUG
 #define  LIB_PATH     "..\\..\\..\\Library\\Win32\\Debug"
@@ -33,138 +11,142 @@ MV_FRAME_OUT_INFO_EX g_frameInfo = { 0 };
 
 #pragma comment(lib,  LIB_PATH   "\\MvCameraControl.lib")
 
-VisionCore::VisionCore(QWidget* parent)
-    : QMainWindow(parent)
-    , ui(new Ui::VisionCoreClass())
-{
-    ui->setupUi(this);
+#if defined(_MSC_VER) && (_MSC_VER >= 1600)    
+# pragma execution_character_set("utf-8")    
+#endif
 
-    m_hWndDisplay = (HWND)ui->label_Image->winId();
+VisionCore& VisionCore::instance()
+{
+    // å…¨å±€å•ä¾‹å¯¹è±¡
+    static VisionCore instance;
+
+    return instance;
 }
 
-VisionCore::~VisionCore()
+int VisionCore::VisionCore_Init(HWND hWndDisplay)
 {
-    // Í£Ö¹È¡Á÷Ïß³Ì
-    m_bGrabbing = false;
-    if (m_hGrabThread)
+    // æ˜¾ç¤ºçª—å£å¥æŸ„
+    m_display = hWndDisplay;
+
+    // åˆå§‹åŒ–ç›¸æœºSDKåº“
+    int result = MV_CC_Initialize();
+    if (result != MV_OK)
     {
-        WaitForSingleObject(m_hGrabThread, 3000);
-        CloseHandle(m_hGrabThread);
-        m_hGrabThread = nullptr;
+        qDebug() << "[VisionCore] åˆå§‹åŒ–ç›¸æœºSDKåº“å¤±è´¥ï¼Œé”™è¯¯ç : 0x" << result << Qt::hex << result;
+        return 1;
     }
 
-    // ÇåÀíSDK×ÊÔ´
-    if (handle)
+    // åˆå§‹åŒ–æšä¸¾åˆ—è¡¨
+    memset(&m_deviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
+    // æšä¸¾è®¾å¤‡
+    result = MV_CC_EnumDevices(
+        MV_GIGE_DEVICE | 
+        MV_USB_DEVICE | 
+        MV_GENTL_GIGE_DEVICE | 
+        MV_GENTL_CAMERALINK_DEVICE | 
+        MV_GENTL_CXP_DEVICE | 
+        MV_GENTL_XOF_DEVICE, 
+        &m_deviceList
+    );
+    // æšä¸¾ç»“æœåˆ¤å®š
+    if (result != MV_OK)
     {
-        MV_CC_StopGrabbing(handle);
-        MV_CC_CloseDevice(handle);
-        MV_CC_DestroyHandle(handle);
-        handle = nullptr;
+        qDebug() << "[VisionCore] æšä¸¾è®¾å¤‡å¤±è´¥ï¼Œé”™è¯¯ç : 0x" << result << Qt::hex << result;
+        return 1;
     }
-    MV_CC_Finalize();
+    // æšä¸¾ç»“æœè®¾å¤‡æ•°é‡åˆ¤å®š
+    if (m_deviceList.nDeviceNum == 0)
+    {
+        qDebug() << "[VisionCore] æœªæ£€æµ‹åˆ°è®¾å¤‡";
+        return 1;
+    }
 
-    delete ui;
+    // åˆå§‹åŒ–ç›¸æœºå¥æŸ„
+    m_handle = nullptr;
+    m_deviceInfo = m_deviceList.pDeviceInfo[0];
+
+    // ç»‘å®šç›¸æœºå¥æŸ„
+    result = MV_CC_CreateHandle(&m_handle, m_deviceInfo);
+    if (result != MV_OK)
+    {
+        qDebug() << "[VisionCore] åˆ›å»ºå¥æŸ„å¤±è´¥ï¼Œé”™è¯¯ç : 0x" << result << Qt::hex << result;
+        m_handle = nullptr;
+        return 1;
+    }
+
+    // æ‰“å¼€è®¾å¤‡
+    result = MV_CC_OpenDevice(m_handle, MV_ACCESS_Exclusive, 0);
+    if (result != MV_OK)
+    {
+        qDebug() << "[VisionCore] æ‰“å¼€è®¾å¤‡å¤±è´¥ï¼Œé”™è¯¯ç : 0x" << result << Qt::hex << result;
+        MV_CC_DestroyHandle(m_handle);
+        m_handle = nullptr;
+        return 1;
+    }
+
+    // è·å–æœ€ä½³åŒ…å¤§å°
+    m_packetSize = MV_CC_GetOptimalPacketSize(m_handle);
+    if (m_packetSize > 0)
+    {
+        // è®¾ç½®æœ€ä½³åŒ…å¤§å°
+        MV_CC_SetIntValueEx(m_handle, "GevSCPSPacketSize", m_packetSize);
+    }
+
+    // è®¾ç½®è§¦å‘æ¨¡å¼
+    result = MV_CC_SetEnumValue(m_handle, "TriggerMode", 0);
+    if (result != MV_OK)
+    {
+        qDebug() << "[VisionCore] è®¾ç½®è§¦å‘æ¨¡å¼å¤±è´¥ï¼Œé”™è¯¯ç : 0x" << result << Qt::hex << result;
+    }
+
+    return 0;
 }
 
-void VisionCore::on_pushButton_Init_clicked()
-{
-    // ³õÊ¼»¯
-    int nRet = MV_CC_Initialize();
-    if (nRet != MV_OK)
-    {
-        QMessageBox::critical(this, "´íÎó", QString("SDK³õÊ¼»¯Ê§°Ü£¬´íÎóÂë: 0x%1").arg(nRet, 8, 16, QChar('0')));
-        return;
-    }
-
-    // Ã¶¾ÙÉè±¸
-    memset(&stDeviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
-    nRet = MV_CC_EnumDevices(MV_GIGE_DEVICE | MV_USB_DEVICE | MV_GENTL_GIGE_DEVICE
-        | MV_GENTL_CAMERALINK_DEVICE | MV_GENTL_CXP_DEVICE | MV_GENTL_XOF_DEVICE, &stDeviceList);
-    if (nRet != MV_OK)
-    {
-        QMessageBox::critical(this, "´íÎó", QString("Ã¶¾ÙÉè±¸Ê§°Ü£¬´íÎóÂë: 0x%1").arg(nRet, 8, 16, QChar('0')));
-        return;
-    }
-    if (stDeviceList.nDeviceNum == 0)
-    {
-        QMessageBox::information(this, "ÌáÊ¾", "Î´¼ì²âµ½Éè±¸");
-        return;  // ¡ï ÉÙÁËÕâ¸ö
-    }
-
-    // ´´½¨¾ä±ú
-    handle = nullptr;
-    pDeviceInfo = stDeviceList.pDeviceInfo[0];
-    nRet = MV_CC_CreateHandle(&handle, pDeviceInfo);
-    if (nRet != MV_OK)
-    {
-        QMessageBox::critical(this, "´íÎó", QString("´´½¨¾ä±úÊ§°Ü£¬´íÎóÂë: 0x%1").arg(nRet, 8, 16, QChar('0')));
-        handle = nullptr;
-        return;
-    }
-    // ´ò¿ªÉè±¸
-    nRet = MV_CC_OpenDevice(handle, MV_ACCESS_Exclusive, 0);
-    if (nRet != MV_OK)
-    {
-        QMessageBox::critical(this, "´íÎó", QString("´ò¿ªÉè±¸Ê§°Ü£¬´íÎóÂë: 0x%1").arg(nRet, 8, 16, QChar('0')));
-        MV_CC_DestroyHandle(handle);
-        handle = nullptr;
-        return;
-    }
-    // »ñÈ¡×î¼Ñ°ü´óĞ¡
-    nPktSize = MV_CC_GetOptimalPacketSize(handle);
-    if (nPktSize > 0)
-    {
-        // ÉèÖÃ×î¼Ñ°ü´óĞ¡
-        MV_CC_SetIntValueEx(handle, "GevSCPSPacketSize", nPktSize);
-    }
-
-    // ÉèÖÃ´¥·¢Ä£Ê½
-    nRet = MV_CC_SetEnumValue(handle, "TriggerMode", 0);
-    if (nRet != MV_OK)
-    {
-        QMessageBox::warning(this, "¾¯¸æ", QString("ÉèÖÃ´¥·¢Ä£Ê½Ê§°Ü£¬´íÎóÂë: 0x%1").arg(nRet, 8, 16, QChar('0')));
-    }
-}
-
-// Ïß³Ìº¯Êı£¨¾²Ì¬»òÈ«¾Ö£©
+// çº¿ç¨‹å‡½æ•°
 unsigned int __stdcall GrabThreadProc(void* pUser)
 {
     VisionCore* pThis = (VisionCore*)pUser;
+
+    // åˆå§‹åŒ–å›¾åƒæ•°æ®ç»“æ„ä½“
     MV_FRAME_OUT stFrame = { 0 };
 
-    // ¡ï ¼ÓÕâÀï£º¼ÇÂ¼ÉÏÒ»Ö¡µÄÊ±¼ä
-    static LARGE_INTEGER s_prevTime = { 0 };
-    LARGE_INTEGER freq = { 0 };
-    QueryPerformanceFrequency(&freq);  // »ñÈ¡CPU¸ßÆµ¼ÆÊ±Æ÷ÆµÂÊ
+    //// â˜… åŠ è¿™é‡Œï¼šè®°å½•ä¸Šä¸€å¸§çš„æ—¶é—´
+    //static LARGE_INTEGER s_prevTime = { 0 };
+    //LARGE_INTEGER freq = { 0 };
+    //QueryPerformanceFrequency(&freq);  // è·å–CPUé«˜é¢‘è®¡æ—¶å™¨é¢‘ç‡
 
-    while (pThis->m_bGrabbing)
+    while (pThis->m_isGrabbing)
     {
-        int nRet = MV_CC_GetImageBuffer(handle, &stFrame, 1000);
-        if (nRet == MV_OK)
+        int result = MV_CC_GetImageBuffer(pThis->m_handle, &stFrame, 1000);
+        if (result == MV_OK)
         {
-            // ¡ï ¼ÓÕâÀï£º¼ÆËãÓëÉÏÒ»Ö¡µÄÊ±¼ä²î
-            LARGE_INTEGER now;
-            QueryPerformanceCounter(&now);
-            if (s_prevTime.QuadPart != 0)
+            //// â˜… åŠ è¿™é‡Œï¼šè®¡ç®—ä¸ä¸Šä¸€å¸§çš„æ—¶é—´å·®
+            //LARGE_INTEGER now;
+            //QueryPerformanceCounter(&now);
+            //if (s_prevTime.QuadPart != 0)
+            //{
+            //    double elapsedMs = (double)(now.QuadPart - s_prevTime.QuadPart) * 1000.0 / freq.QuadPart;
+            //    qDebug() << "å¸§é—´éš”:" << elapsedMs << "ms";
+            //}
+            //s_prevTime = now;
+
+            // â˜… ç¬¬ä¸€æ¬¡æ‹¿åˆ°å¸§æ—¶åˆ†é…å†…å­˜
+            if (pThis->m_frameData == nullptr)
             {
-                double elapsedMs = (double)(now.QuadPart - s_prevTime.QuadPart) * 1000.0 / freq.QuadPart;
-                qDebug() << "Ö¡¼ä¸ô:" << elapsedMs << "ms";
+                pThis->m_nFrameDataSize = stFrame.stFrameInfo.nFrameLenEx;
+                pThis->m_frameData = new unsigned char[pThis->m_nFrameDataSize];
             }
-            s_prevTime = now;
 
-            // ¡ï µÚÒ»´ÎÄÃµ½Ö¡Ê±·ÖÅäÄÚ´æ
-            if (g_frameData == nullptr)
+            // â˜… åŠ åœ¨è¿™é‡Œï¼šæŠŠæ•°æ®æ‹·å‡ºæ¥ï¼Œä¾›æœºå™¨è§†è§‰å¤„ç†ç”¨
             {
-                g_frameData = new unsigned char[stFrame.stFrameInfo.nFrameLenEx];
+                QMutexLocker locker(&pThis->m_mutex);
+                memcpy(pThis->m_frameData, stFrame.pBufAddr, stFrame.stFrameInfo.nFrameLenEx);
+                memcpy(&pThis->m_frameInfo, &stFrame.stFrameInfo, sizeof(MV_FRAME_OUT_INFO_EX));
             }
-
-            // ¡ï ¼ÓÔÚÕâÀï£º°ÑÊı¾İ¿½³öÀ´£¬¹©»úÆ÷ÊÓ¾õ´¦ÀíÓÃ
-            memcpy(g_frameData, stFrame.pBufAddr, stFrame.stFrameInfo.nFrameLenEx);
-            memcpy(&g_frameInfo, &stFrame.stFrameInfo, sizeof(MV_FRAME_OUT_INFO_EX));
-
-            qDebug() << "·Ö±æÂÊ:" << g_frameInfo.nWidth << "x" << g_frameInfo.nHeight;
             
-            // ¡ï ÔÚÕâÀï°ÑÊı¾İ×ª³É cv::Mat£¬¹©»úÆ÷ÊÓ¾õ´¦ÀíÓÃ
+            qDebug() << "åˆ†è¾¨ç‡:" << pThis->m_frameInfo.nWidth << "x" << pThis->m_frameInfo.nHeight;
+            
+            // â˜… åœ¨è¿™é‡ŒæŠŠæ•°æ®è½¬æˆ cv::Matï¼Œä¾›æœºå™¨è§†è§‰å¤„ç†ç”¨
             //cv::Mat srcImage;
             //if (g_frameInfo.enPixelType == PixelType_Gvsp_Mono8)
             //{
@@ -175,62 +157,101 @@ unsigned int __stdcall GrabThreadProc(void* pUser)
             //    srcImage = cv::Mat(g_frameInfo.nHeight, g_frameInfo.nWidth, CV_8UC3, g_frameData);
             //}
 
-            // SDK Ö±½ÓäÖÈ¾µ½´°¿Ú£¬²»¿½±´¡¢²»×ª»»
+            // SDK ç›´æ¥æ¸²æŸ“åˆ°çª—å£ï¼Œä¸æ‹·è´ã€ä¸è½¬æ¢
             MV_CC_IMAGE stImage = { 0 };
             stImage.nWidth = stFrame.stFrameInfo.nExtendWidth;
             stImage.nHeight = stFrame.stFrameInfo.nExtendHeight;
             stImage.enPixelType = stFrame.stFrameInfo.enPixelType;
             stImage.nImageLen = stFrame.stFrameInfo.nFrameLenEx;
             stImage.pImageBuf = stFrame.pBufAddr;
-            MV_CC_DisplayOneFrameEx2(handle, pThis->m_hWndDisplay, &stImage, 0);
+            MV_CC_DisplayOneFrameEx2(pThis->m_handle, pThis->m_display, &stImage, 0);
 
-            MV_CC_FreeImageBuffer(handle, &stFrame);
+            MV_CC_FreeImageBuffer(pThis->m_handle, &stFrame);
         }
     }
     return 0;
 }
 
-void VisionCore::on_pushButton_Start_clicked()
+int VisionCore::VisionCore_Start()
 {
-    if (handle == nullptr)
+    // å®‰å…¨åˆ¤å®š
+    if (m_handle == nullptr)
     {
-        QMessageBox::warning(this, "", "Please First Init");
-        return;
+        qDebug() << "[VisionCore] Please First Init";
+        return 1;
     }
 
-    // ¸Ä³ÉÏÈ StartGrabbing£¬ÔÙ¿ªÏß³Ì
-    MV_CC_StartGrabbing(handle);
-    // ¿ªÈ¡Á÷Ïß³Ì£¨_beginthreadex ·½Ê½£¬ºÍ BasicDemo Ò»Ñù£©
-    m_bGrabbing = true;
+    // å…ˆå¼€å¯å›¾åƒé‡‡é›†
+    MV_CC_StartGrabbing(m_handle);
+
+    // å†å¼€å¯å–æµçº¿ç¨‹
+    m_isGrabbing = true;
     unsigned int nThreadID = 0;
-    m_hGrabThread = (void*)_beginthreadex(nullptr, 0, GrabThreadProc, this, 0, &nThreadID);
+    m_grabThread = (void*)_beginthreadex(nullptr, 0, GrabThreadProc, this, 0, &nThreadID);
+
+    return 0;
 }
 
-void VisionCore::on_pushButton_Stop_clicked()
+int VisionCore::VisionCore_Stop()
 {
-    m_bGrabbing = false;           // Ïß³ÌÍË³ö
-    if (m_hGrabThread)
-    {
-        WaitForSingleObject(m_hGrabThread, 3000);
-        CloseHandle(m_hGrabThread);
-        m_hGrabThread = nullptr;
-    }
+    this->VisionCore_Uninit();
 
-    if (handle == nullptr)
-    {
-        QMessageBox::warning(this, "", "No Device Connect");
-        return;
-    }
-
-    // Í£Ö¹×¥Í¼
-    MV_CC_StopGrabbing(handle);
-
-    // ¹Ø±ÕÉè±¸
-    MV_CC_CloseDevice(handle);
-
-    // Ïú»Ù¾ä±ú
-    MV_CC_DestroyHandle(handle);
-
-    // ÊÍ·Å×ÊÔ´
-    MV_CC_Finalize();
+    return 0;
 }
+
+
+int VisionCore::VisionCore_Uninit()
+{
+    qDebug() << "[VisionCore] å¼€å§‹å®‰å…¨åœæ­¢è¿æ¥...";
+
+    // åœæ­¢å–æµçº¿ç¨‹
+    m_isGrabbing = false;           // çº¿ç¨‹é€€å‡º
+
+    if (m_grabThread)
+    {
+        WaitForSingleObject(m_grabThread, 3000);
+        CloseHandle(m_grabThread);
+        m_grabThread = nullptr;
+    }
+
+    // é‡Šæ”¾å›¾åƒå†…å­˜ï¼Œé˜²æ­¢ä¸‹æ¬¡ Start æ—¶å†…å­˜æ³„æ¼
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_frameData != nullptr) 
+        {
+            delete[] m_frameData;
+            m_frameData = nullptr;
+            m_nFrameDataSize = 0;
+        }
+    }
+
+    // æ¸…ç†SDKèµ„æº
+    if (m_handle)
+    {
+        MV_CC_StopGrabbing(m_handle);
+        MV_CC_CloseDevice(m_handle);
+        MV_CC_DestroyHandle(m_handle);
+        m_handle = nullptr;
+    }
+
+    MV_CC_Finalize();
+
+    return 0;
+}
+
+VisionCore::VisionCore()
+{
+    qDebug() << "[VisionCore] å¼€å§‹åˆå§‹åŒ–";
+
+}
+
+VisionCore::~VisionCore()
+{
+    m_isGrabbing = false;           // ä»…åšæœ€åŸºç¡€çš„æ ‡å¿—ä½æ¸…ç†
+    if (m_frameData != nullptr) 
+    {
+        delete[] m_frameData;
+        m_frameData = nullptr;
+    }
+}
+
