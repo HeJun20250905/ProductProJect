@@ -165,7 +165,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         // 检查XY轴是否到位
         if (IsAtPosition(AXIS_X, m_feederPosX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_feederPosY, &m_currentPosY) == 0)
@@ -189,7 +189,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         if (IsAtPosition(AXIS_Z, m_feederPosZ, &m_currentPosZ) == 0)
         {
@@ -214,7 +214,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
         {
@@ -237,7 +237,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         if (IsAtPosition(AXIS_X, m_targetPosX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_targetPosY, &m_currentPosY) == 0)
         {
@@ -259,7 +259,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         if (IsAtPosition(AXIS_Z, -50.0, &m_currentPosZ) == 0)
         {
@@ -284,7 +284,7 @@ void WorkThread::TimerSlot()
         if (!m_hasStarted)
         {
             m_hasStarted = true;
-            break; // 直接跳出，这 50ms 不检查位置，给硬件一个反应时间
+            break; // 直接跳出，50ms硬件反应时间
         }
         if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
         {

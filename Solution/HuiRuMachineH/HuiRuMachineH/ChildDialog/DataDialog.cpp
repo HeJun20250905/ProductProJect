@@ -36,7 +36,7 @@ DataDialog::DataDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("数据");
+    this->setWindowTitle("数据库");
 
     // 【关键】：在界面加载时，初始化数据库 DLL
     LibDatabase_InitDevice();

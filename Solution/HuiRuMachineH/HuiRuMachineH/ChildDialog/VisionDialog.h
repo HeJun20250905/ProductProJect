@@ -18,6 +18,12 @@ private:
 
 private slots:
     void on_pushButton_Cancel_clicked();
+    void on_pushButton_OK_clicked();
+
+    void on_pushButton_Init_clicked();
+    void on_pushButton_Start_clicked();
+    void on_pushButton_Stop_clicked();
+    void on_pushButton_Uninit_clicked();
 };
 
 

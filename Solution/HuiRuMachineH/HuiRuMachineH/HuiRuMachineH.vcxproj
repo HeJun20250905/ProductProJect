@@ -61,18 +61,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>MachineCore</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>MachineCore</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <OutputFile>..\..\..\Output\Win32\Debug\HuiRuMachineH.exe</OutputFile>
+      <OutputFile>..\..\..\Output\Win32\Debug\MachineCore.exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <OutputFile>..\..\..\Output\Win32\Release\HuiRuMachineH.exe</OutputFile>
+      <OutputFile>..\..\..\Output\Win32\Release\MachineCore.exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">

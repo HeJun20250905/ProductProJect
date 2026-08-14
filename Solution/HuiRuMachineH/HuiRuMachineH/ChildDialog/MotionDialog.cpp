@@ -28,7 +28,7 @@ MotionDialog::MotionDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("运控");
+    this->setWindowTitle("运控模块");
 
     m_moveTimer = new QTimer(this);
     connect(m_moveTimer, &QTimer::timeout, this, &MotionDialog::on_moveTimer_timeout);

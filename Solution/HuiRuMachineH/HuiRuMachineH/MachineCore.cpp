@@ -21,6 +21,7 @@
 #include "ChildDialog/MotionDialog.h"
 #include "ChildDialog/DataDialog.h"
 
+#include "../../../Include/VisionCore_Export.h"
 #include "../../../Include/MotionCore_Export.h"
 
 #ifdef _DEBUG
@@ -29,6 +30,7 @@
 #define  LIB_PATH     "..\\..\\..\\Library\\Win32\\Release"
 #endif
 
+#pragma comment(lib,  LIB_PATH"\\VisionCore.lib")
 #pragma comment(lib,  LIB_PATH"\\MotionCore.lib")
 
 #define WIN32_LEAD_AND_MEAN
@@ -68,7 +70,7 @@ MachineCore::MachineCore(QWidget *parent)
     {
         qDebug("[MachineCore] OnInitMachine failed");
         ::MessageBoxW((HWND)this->winId(), L"[MachineCore] 初始化失败！", L"提示", MB_OK | MB_ICONERROR);
-        return;
+        //return;
     }
 }
 
@@ -78,6 +80,11 @@ MachineCore::~MachineCore()
     qDebug() << "[MachineCore] Motion: 正在断开连接...";
     Motion_UninitDevice();
     qDebug() << "[MachineCore] Motion: 断开连接完成";
+
+    // 卸载库
+    qDebug() << "[MachineCore] Vision: 卸载中...";
+    Vision_UninitDevice();
+    qDebug() << "[MachineCore] Vision: 卸载完成";
 
     delete ui;
 }
@@ -252,6 +259,28 @@ int MachineCore::OnInitDatabase()
 
 int MachineCore::OnInitVision()
 {
+    qDebug() << "[MachineCore] OnInitVision InitVision";
+
+    WId nativeHandle = ui->label_Video->winId();
+    int result = Vision_InitDevice(reinterpret_cast<void*>(nativeHandle));
+    if (result != VISION_RESULT_OK)
+    {
+        qDebug() << "[VisionDialog] OnInitVision 初始化失败，错误码:" << result;
+        return MACHINECORE_RESULT_ERROR_VISION;
+    }
+
+    qDebug() << "[VisionDialog] OnInitVision 初始化成功，显示窗口已绑定";
+
+    result = Vision_StartGrabbing();
+    if (result != VISION_RESULT_OK)
+    {
+        qDebug() << "[VisionDialog] OnInitVision 启动采集失败，错误码:" << result;
+        
+        return MACHINECORE_RESULT_ERROR_VISION;
+    }
+
+    qDebug() << "[VisionDialog] OnInitVision 启动采集成功";
+
     return MACHINECORE_RESULT_SUCCESS;
 }
 
@@ -260,8 +289,8 @@ int MachineCore::OnInitMotion()
     qDebug() << "[MachineCore] InitMotion: Motion_InitDevice";
 
     // 初始化设备 (连接仿真器)
-    int ret = Motion_InitDevice("127.0.0.1");
-    if (ret != MOTION_RESULT_OK) 
+    int result = Motion_InitDevice("127.0.0.1");
+    if (result != MOTION_RESULT_OK)
     {
         qDebug() << "[MachineCore] InitMotion: Motion_InitDevice failed";
 

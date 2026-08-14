@@ -17,7 +17,7 @@ LibraryDialog::LibraryDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("元件");
+    this->setWindowTitle("元件库");
 }
 
 LibraryDialog::~LibraryDialog()

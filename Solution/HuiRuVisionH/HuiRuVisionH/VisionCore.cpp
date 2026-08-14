@@ -102,6 +102,45 @@ int VisionCore::VisionCore_Init(HWND hWndDisplay)
     return 0;
 }
 
+int VisionCore::VisionCore_Uninit()
+{
+    qDebug() << "[VisionCore] 开始安全停止连接...";
+
+    // 停止取流线程
+    m_isGrabbing = false;           // 线程退出
+
+    if (m_grabThread)
+    {
+        WaitForSingleObject(m_grabThread, 3000);
+        CloseHandle(m_grabThread);
+        m_grabThread = nullptr;
+    }
+
+    // 释放图像内存，防止下次 Start 时内存泄漏
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_frameData != nullptr)
+        {
+            delete[] m_frameData;
+            m_frameData = nullptr;
+            m_nFrameDataSize = 0;
+        }
+    }
+
+    // 清理SDK资源
+    if (m_handle)
+    {
+        MV_CC_StopGrabbing(m_handle);
+        MV_CC_CloseDevice(m_handle);
+        MV_CC_DestroyHandle(m_handle);
+        m_handle = nullptr;
+    }
+
+    MV_CC_Finalize();
+
+    return 0;
+}
+
 // 线程函数
 unsigned int __stdcall GrabThreadProc(void* pUser)
 {
@@ -200,43 +239,372 @@ int VisionCore::VisionCore_Stop()
 }
 
 
-int VisionCore::VisionCore_Uninit()
+// --- 曝光时间 ---
+int VisionCore::VisionCore_SetExposureTime(float exposureUs)
 {
-    qDebug() << "[VisionCore] 开始安全停止连接...";
-
-    // 停止取流线程
-    m_isGrabbing = false;           // 线程退出
-
-    if (m_grabThread)
+    if (m_handle == nullptr)
     {
-        WaitForSingleObject(m_grabThread, 3000);
-        CloseHandle(m_grabThread);
-        m_grabThread = nullptr;
+        qDebug() << "[VisionCore] SetExposureTime Please First Init";
+        return 1;
+    }
+    return MV_CC_SetFloatValue(m_handle, "ExposureTime", exposureUs);
+}
+
+int VisionCore::VisionCore_GetExposureTime(float& exposureUs)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetExposureTime Please First Init";
+        return 1;
+    }
+    MVCC_FLOATVALUE floatValue = { 0 };
+    int ret = MV_CC_GetFloatValue(m_handle, "ExposureTime", &floatValue);
+    if (ret == MV_OK) 
+    {
+        exposureUs = floatValue.fCurValue;
+        qDebug() << "[VisionCore] 曝光时间:" << exposureUs << "us";
+    }
+    return ret;
+}
+
+// --- 自动曝光 ---
+int VisionCore::VisionCore_SetExposureAuto(int mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetExposureAut Please First Init";
+        return 1;
+    }
+    return MV_CC_SetEnumValue(m_handle, "ExposureAuto", mode);
+}
+
+int VisionCore::VisionCore_GetExposureAuto(int& mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetExposureAuto Please First Init";
+        return 1;
+    }
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "ExposureAuto", &enumValue);
+    if (ret == MV_OK) 
+    {
+        mode = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 自动曝光:" << mode;
+    }
+    return ret;
+}
+
+// --- 增益 ---
+int VisionCore::VisionCore_SetGain(float gainDb)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetGain Please First Init";
+        return 1;
+    }
+    
+    return MV_CC_SetFloatValue(m_handle, "Gain", gainDb);
+}
+
+int VisionCore::VisionCore_GetGain(float& gainDb)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetGain Please First Init";
+        return 1;
+    }
+    
+    MVCC_FLOATVALUE floatValue = { 0 };
+    int ret = MV_CC_GetFloatValue(m_handle, "Gain", &floatValue);
+    if (ret == MV_OK) 
+    {
+        gainDb = floatValue.fCurValue;
+        qDebug() << "[VisionCore] 增益:" << gainDb << "dB";
+    }
+    return ret;
+}
+
+// --- 自动增益 ---
+int VisionCore::VisionCore_SetGainAuto(int mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetGainAuto Please First Init";
+        return 1;
+    }
+        
+    return MV_CC_SetEnumValue(m_handle, "GainAuto", mode);
+}
+
+int VisionCore::VisionCore_GetGainAuto(int& mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetGainAuto Please First Init";
+        return 1;
+    }
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "GainAuto", &enumValue);
+    if (ret == MV_OK) 
+    {
+        mode = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 自动增益:" << mode;
+    }
+    return ret;
+}
+
+// --- 亮度 ---
+int VisionCore::VisionCore_SetBrightness(int brightness)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetBrightness Please First Init";
+        return 1;
+    }
+    return MV_CC_SetIntValueEx(m_handle, "Brightness", brightness);
+}
+
+int VisionCore::VisionCore_GetBrightness(int& brightness)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetBrightness Please First Init";
+        return 1;
+    }
+    MVCC_INTVALUE_EX intValue = { 0 };
+    int ret = MV_CC_GetIntValueEx(m_handle, "Brightness", &intValue);
+    if (ret == MV_OK) 
+    {
+        brightness = (int)intValue.nCurValue;
+        qDebug() << "[VisionCore] 亮度:" << brightness;
+    }
+    return ret;
+}
+
+// --- 对比度 ---
+int VisionCore::VisionCore_SetContrast(int contrast)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetContrast Please First Init";
+        return 1;
+    }
+    return MV_CC_SetIntValueEx(m_handle, "Contrast", contrast);
+}
+
+int VisionCore::VisionCore_GetContrast(int& contrast)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetContrast Please First Init";
+        return 1;
+    }
+    MVCC_INTVALUE_EX intValue = { 0 };
+    int ret = MV_CC_GetIntValueEx(m_handle, "Contrast", &intValue);
+    if (ret == MV_OK) 
+    {
+        contrast = (int)intValue.nCurValue;
+        qDebug() << "[VisionCore] 对比度:" << contrast;
+    }
+    return ret;
+}
+
+// --- 伽马使能 ---
+int VisionCore::VisionCore_SetGammaEnable(bool enable)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetGammaEnable Please First Init";
+        return 1;
+    }
+    return MV_CC_SetBoolValue(m_handle, "GammaEnable", enable ? 1 : 0);
+}
+
+int VisionCore::VisionCore_GetGammaEnable(bool& enable)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetGammaEnable Please First Init";
+        return 1;
+    }
+    bool bValue = false;
+    int ret = MV_CC_GetBoolValue(m_handle, "GammaEnable", &bValue);
+    if (ret == MV_OK) 
+    {
+        enable = bValue;
+        qDebug() << "[VisionCore] 伽马使能:" << enable;
+    }
+    return ret;
+}
+
+// --- 伽马值 ---
+int VisionCore::VisionCore_SetGamma(float gamma)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetGamma Please First Init";
+        return 1;
+    }
+    return MV_CC_SetFloatValue(m_handle, "Gamma", gamma);
+}
+
+int VisionCore::VisionCore_GetGamma(float& gamma)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetGamma Please First Init";
+        return 1;
+    }
+    MVCC_FLOATVALUE floatValue = { 0 };
+    int ret = MV_CC_GetFloatValue(m_handle, "Gamma", &floatValue);
+    if (ret == MV_OK) 
+    {
+        gamma = floatValue.fCurValue;
+        qDebug() << "[VisionCore] 伽马值:" << gamma;
+    }
+    return ret;
+}
+
+// --- 自动白平衡 ---
+int VisionCore::VisionCore_SetWhiteBalanceAuto(int mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetWhiteBalanceAuto Please First Init";
+        return 1;
+    }
+    return MV_CC_SetEnumValue(m_handle, "BalanceWhiteAuto", mode);
+}
+
+int VisionCore::VisionCore_GetWhiteBalanceAuto(int& mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetWhiteBalanceAuto Please First Init";
+        return 1;
+    }
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "BalanceWhiteAuto", &enumValue);
+    if (ret == MV_OK) 
+    {
+        mode = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 自动白平衡:" << mode;
+    }
+    return ret;
+}
+
+// --- 采集帧率 ---
+int VisionCore::VisionCore_SetAcquisitionFrameRate(float frameRate)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetAcquisitionFrameRate Please First Init";
+        return 1;
+    }
+    return MV_CC_SetFloatValue(m_handle, "AcquisitionFrameRate", frameRate);
+}
+
+int VisionCore::VisionCore_GetAcquisitionFrameRate(float& frameRate)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetAcquisitionFrameRate Please First Init";
+        return 1;
+    }
+    MVCC_FLOATVALUE floatValue = { 0 };
+    int ret = MV_CC_GetFloatValue(m_handle, "AcquisitionFrameRate", &floatValue);
+    if (ret == MV_OK) 
+    {
+        frameRate = floatValue.fCurValue;
+        qDebug() << "[VisionCore] 采集帧率:" << frameRate;
+    }
+    return ret;
+}
+
+// --- 像素格式 ---
+int VisionCore::VisionCore_SetPixelFormat(unsigned int pixelFormat)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetPixelFormat Please First Init";
+        return 1;
+    }
+    return MV_CC_SetEnumValue(m_handle, "PixelFormat", pixelFormat);
+}
+
+int VisionCore::VisionCore_GetPixelFormat(unsigned int& pixelFormat)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetPixelFormat Please First Init";
+        return 1;
+    }
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "PixelFormat", &enumValue);
+    if (ret == MV_OK) 
+    {
+        pixelFormat = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 像素格式:" << pixelFormat;
+    }
+    return ret;
+}
+
+// --- 触发模式 ---
+int VisionCore::VisionCore_SetTriggerMode(int mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetTriggerMode Please First Init";
+        return 1;
+    }
+    return MV_CC_SetEnumValue(m_handle, "TriggerMode", mode);
+}
+
+int VisionCore::VisionCore_GetTriggerMode(int& mode)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetTriggerMode Please First Init";
+        return 1;
+    }
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "TriggerMode", &enumValue);
+    if (ret == MV_OK) 
+    {
+        mode = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 触发模式:" << mode;
+    }
+    return ret;
+}
+
+// --- 触发源 ---
+int VisionCore::VisionCore_SetTriggerSource(int& source)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] SetTriggerSource Please First Init";
+        return 1;
+    }
+    return MV_CC_SetEnumValue(m_handle, "TriggerSource", source);
+}
+
+int VisionCore::VisionCore_GetTriggerSource(int& sourceValue)
+{
+    if (m_handle == nullptr)
+    {
+        qDebug() << "[VisionCore] GetTriggerSource Please First Init";
+        return 1;
     }
 
-    // 释放图像内存，防止下次 Start 时内存泄漏
+    MVCC_ENUMVALUE enumValue = { 0 };
+    int ret = MV_CC_GetEnumValue(m_handle, "TriggerSource", &enumValue);
+    if (ret == MV_OK)
     {
-        QMutexLocker locker(&m_mutex);
-        if (m_frameData != nullptr) 
-        {
-            delete[] m_frameData;
-            m_frameData = nullptr;
-            m_nFrameDataSize = 0;
-        }
+        sourceValue = enumValue.nCurValue;
+        qDebug() << "[VisionCore] 触发源枚举值:" << sourceValue;
     }
-
-    // 清理SDK资源
-    if (m_handle)
-    {
-        MV_CC_StopGrabbing(m_handle);
-        MV_CC_CloseDevice(m_handle);
-        MV_CC_DestroyHandle(m_handle);
-        m_handle = nullptr;
-    }
-
-    MV_CC_Finalize();
-
-    return 0;
+    return ret;
 }
 
 VisionCore::VisionCore()

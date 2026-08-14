@@ -19,7 +19,7 @@ FileDialog::FileDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("文件");
+    this->setWindowTitle("文件选项");
 }
 
 FileDialog::~FileDialog()

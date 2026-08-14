@@ -17,7 +17,7 @@ ToolDialog::ToolDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("工具");
+    this->setWindowTitle("其他工具");
 }
 
 ToolDialog::~ToolDialog()

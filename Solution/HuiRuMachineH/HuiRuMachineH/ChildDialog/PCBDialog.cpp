@@ -18,7 +18,7 @@ PCBDialog::PCBDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("PCB");
+    this->setWindowTitle("PCB配置");
 }
 
 PCBDialog::~PCBDialog()

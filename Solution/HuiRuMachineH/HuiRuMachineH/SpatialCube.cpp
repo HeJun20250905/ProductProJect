@@ -29,22 +29,30 @@ int SpatialCube::SpatialCube_Init()
 {
     QMutexLocker locker(&m_mutex); // 加锁保护
 
-    // 电机回零操作
     
-    // 计算世界坐标原点坐标补偿
+    return 0;
+}
 
+int SpatialCube::SpatialCube_CalibrateWorldOrigin(float x, float y)
+{
+    QMutexLocker locker(&m_mutex); // 加锁保护
+
+    qDebug() << "[SpatialCube] 开始校准世界坐标原点...";
+
+    m_world_xZeroOff = x;
+    m_world_yZeroOff = y;
 
     return 0;
 }
 
-int SpatialCube::TransformPcbToWorld(float& pcb_x, float& pcb_y, float& pcb_z, float& pcb_r)
+int SpatialCube::SpatialCube_TransformPcbToWorld(float& pcb_x, float& pcb_y)
 {
     QMutexLocker locker(&m_mutex); // 加锁保护
 
     return 0;
 }
 
-int SpatialCube::TransformFeederToWorld(float& feeder_x, float& feeder_y, float& feeder_z, float& feeder_r)
+int SpatialCube::SpatialCube_TransformFeederToWorld(float& feeder_x, float& feeder_y)
 {
     QMutexLocker locker(&m_mutex); // 加锁保护
 

@@ -30,14 +30,67 @@ public:
 	//初始化核心组件
 	int VisionCore_Init(HWND hWndDisplay);
 
+	// 卸载/清理资源 (安全释放DLL内部内存)
+	int VisionCore_Uninit();
+
 	// 开始采集图像
     int VisionCore_Start();
 
 	// 停止采集图像
     int VisionCore_Stop();
 
-	// 卸载/清理资源 (安全释放DLL内部内存)
-	int VisionCore_Uninit();
+	// 曝光时间 (单位: 微秒 μs)
+	int VisionCore_SetExposureTime(float exposureUs);
+	int VisionCore_GetExposureTime(float& exposureUs);
+
+	// 自动曝光 (0=Off, 1=On, 2=Once)
+	int VisionCore_SetExposureAuto(int mode);
+	int VisionCore_GetExposureAuto(int& mode);
+
+	// 增益 (单位: dB)
+	int VisionCore_SetGain(float gainDb);
+	int VisionCore_GetGain(float& gainDb);
+
+	// 自动增益 (0=Off, 1=On, 2=Once)
+	int VisionCore_SetGainAuto(int mode);
+	int VisionCore_GetGainAuto(int& mode);
+
+	// 亮度 (0~255)
+	int VisionCore_SetBrightness(int brightness);
+	int VisionCore_GetBrightness(int& brightness);
+
+	// 对比度 (范围因相机而异，先Get获取当前范围)
+	int VisionCore_SetContrast(int contrast);
+	int VisionCore_GetContrast(int& contrast);
+
+	// 伽马使能
+	int VisionCore_SetGammaEnable(bool enable);
+	int VisionCore_GetGammaEnable(bool& enable);
+
+	// 伽马值 (0.1~5.0)
+	int VisionCore_SetGamma(float gamma);
+	int VisionCore_GetGamma(float& gamma);
+
+	// 自动白平衡 (0=Off, 1=On, 2=Once)
+	int VisionCore_SetWhiteBalanceAuto(int mode);
+	int VisionCore_GetWhiteBalanceAuto(int& mode);
+
+	// 采集帧率 (单位: Hz)
+	int VisionCore_SetAcquisitionFrameRate(float frameRate);
+	int VisionCore_GetAcquisitionFrameRate(float& frameRate);
+
+	// 像素格式 (枚举值，如 PixelType_Gvsp_Mono8)
+	int VisionCore_SetPixelFormat(unsigned int pixelFormat);
+	int VisionCore_GetPixelFormat(unsigned int& pixelFormat);
+
+	// 触发模式 (0=Off连续, 1=On触发)
+	int VisionCore_SetTriggerMode(int mode);
+	int VisionCore_GetTriggerMode(int& mode);
+
+	// 触发源
+	int VisionCore_SetTriggerSource(int& source);
+	int VisionCore_GetTriggerSource(int& sourceValue);
+
 
 
 	// 以下成员变量放在public这里是因为需要在静态全局函数中调用

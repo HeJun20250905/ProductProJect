@@ -17,7 +17,7 @@ ParaDialog::ParaDialog(QWidget* parent)
         Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint);
 
-    this->setWindowTitle("参数");
+    this->setWindowTitle("参数设置");
 }
 
 ParaDialog::~ParaDialog()

@@ -61,17 +61,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>VisionCore</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>VisionCore</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>VISIONCTRL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <OutputFile>..\..\..\Output\Win32\Debug\HuiRuVisionH.dll</OutputFile>
-      <ImportLibrary>..\..\..\Library\Win32\Debug\HuiRuVisionH.lib</ImportLibrary>
+      <OutputFile>..\..\..\Output\Win32\Debug\VisionCore.dll</OutputFile>
+      <ImportLibrary>..\..\..\Library\Win32\Debug\VisionCore.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,8 +81,8 @@
       <PreprocessorDefinitions>VISIONCTRL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <OutputFile>..\..\..\Output\Win32\Release\HuiRuVisionH.dll</OutputFile>
-      <ImportLibrary>..\..\..\Library\Win32\Release\HuiRuVisionH.lib</ImportLibrary>
+      <OutputFile>..\..\..\Output\Win32\Release\VisionCore.dll</OutputFile>
+      <ImportLibrary>..\..\..\Library\Win32\Release\VisionCore.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
