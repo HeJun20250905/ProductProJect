@@ -21,17 +21,43 @@ extern "C"
 {
 #endif
 
-	// //初始化设备引擎
-	VISIONCTRL_API int Vision_InitDevice(void* hWndDisplay);
+	VISIONCTRL_API int Vision_InitDevice(void* hWndDisplay);                        // 初始化设备引擎
+    VISIONCTRL_API int Vision_StartGrabbing();                                      // 开始抓图
+    VISIONCTRL_API int Vision_StopGrabbing();                                       // 停止抓图
+	VISIONCTRL_API int Vision_UninitDevice();                                       // 卸载/清理资源 (安全释放DLL内部内存)
 
-	// 开始抓图
-    VISIONCTRL_API int Vision_StartGrabbing();
+    VISIONCTRL_API int Vision_SetExposureTime(float exposureUs);                    // 设置曝光时间
+    VISIONCTRL_API int Vision_GetExposureTime(float* exposureUs);                   // 获取曝光时间
+    VISIONCTRL_API int Vision_SetExposureAuto(int mode);                            // 设置曝光自动模式
+    VISIONCTRL_API int Vision_GetExposureAuto(int* mode);                           // 获取曝光自动模式
 
-    // 停止抓图
-    VISIONCTRL_API int Vision_StopGrabbing();
+    VISIONCTRL_API int Vision_SetGain(float gainDb);                                // 设置增益
+    VISIONCTRL_API int Vision_GetGain(float* gainDb);                               // 获取增益
+    VISIONCTRL_API int Vision_SetGainAuto(int mode);                                // 设置增益自动模式
+    VISIONCTRL_API int Vision_GetGainAuto(int* mode);                               // 获取增益自动模式
 
-	// 卸载/清理资源 (安全释放DLL内部内存)
-	VISIONCTRL_API int Vision_UninitDevice();
+    VISIONCTRL_API int Vision_SetBrightness(int brightness);                        // 设置亮度
+    VISIONCTRL_API int Vision_GetBrightness(int* brightness);                       // 获取亮度
+    VISIONCTRL_API int Vision_SetContrast(int contrast);                            // 设置对比度
+    VISIONCTRL_API int Vision_GetContrast(int* contrast);                           // 获取对比度
+
+    VISIONCTRL_API int Vision_SetGammaEnable(int enable);                           // 设置Gamma使能
+    VISIONCTRL_API int Vision_GetGammaEnable(int* enable);                          // 获取Gamma使能
+    VISIONCTRL_API int Vision_SetGamma(float gamma);                                // 设置Gamma
+    VISIONCTRL_API int Vision_GetGamma(float* gamma);                               // 获取Gamma
+
+    VISIONCTRL_API int Vision_SetWhiteBalanceAuto(int mode);                        // 设置白平衡自动模式
+    VISIONCTRL_API int Vision_GetWhiteBalanceAuto(int* mode);                       // 获取白平衡自动模式
+
+    VISIONCTRL_API int Vision_SetAcquisitionFrameRate(float frameRate);             // 设置帧率
+    VISIONCTRL_API int Vision_GetAcquisitionFrameRate(float* frameRate);            // 获取帧率
+    VISIONCTRL_API int Vision_SetPixelFormat(unsigned int pixelFormat);             // 设置像素格式
+    VISIONCTRL_API int Vision_GetPixelFormat(unsigned int* pixelFormat);            // 获取像素格式
+
+    VISIONCTRL_API int Vision_SetTriggerMode(int mode);                             // 设置触发模式
+    VISIONCTRL_API int Vision_GetTriggerMode(int* mode);                            // 获取触发模式
+    VISIONCTRL_API int Vision_SetTriggerSource(int* sourceValue);                   // 设置触发源
+    VISIONCTRL_API int Vision_GetTriggerSource(int* sourceValue);                   // 获取触发源
 
 #ifdef __cplusplus
 }
