@@ -4,6 +4,7 @@
 
 #include <QPointer>
 #include <QThread>
+#include <QMutex>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MachineCoreClass; };
@@ -31,6 +32,13 @@ enum class MachineCore_State
     Quit
 };
 
+class WorkThread;
+
+namespace cv 
+{
+    class Mat;
+}
+
 class MachineCore : public QMainWindow
 {
     Q_OBJECT
@@ -45,33 +53,49 @@ public:
 private:
     Ui::MachineCoreClass *ui;
 
-    QPointer<QThread> workerThread;         // 工作线程
+    QPointer<QThread> m_workerThread;               // 工作线程
+    WorkThread* m_worker = nullptr;
+
+    cv::Mat* m_visionFrame = nullptr;
+    QMutex m_visionMutex;
+    bool m_visionThreadSign = false;
 
 private:
-    int OnInitLoggerH();                    // 初始化日志系统
-    int OnInitMachine();                    // 初始化机器
-    int OnInitEnvironment();                // 初始化PC环境
-    int OnInitDatabase();                   // 数据库初始化
-    int OnInitVision();                     // 视觉库初始化
-    int OnInitMotion();                     // 运控模组初始化
-    int OnInitLibrary();                    // 元件库初始化
-    int OnInitParameter();                  // 参数表初始化
+    int OnInitLoggerH();                            // 初始化日志系统
+    int OnInitMachine();                            // 初始化机器
+    int OnInitEnvironment();                        // 初始化PC环境
+    int OnInitDatabase();                           // 数据库初始化
+    int OnInitVision();                             // 视觉库初始化
+    int OnInitMotion();                             // 运控模组初始化
+    int OnInitLibrary();                            // 元件库初始化
+    int OnInitParameter();                          // 参数表初始化
+    int OnInitDialogStyle();                        // 样式表初始化
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 private slots:
-    void on_toolButton_Start_clicked();     // 启动
-    void on_toolButton_Quit_clicked();      // 退出
+    void on_toolButton_Start_clicked();             // 启动
+    void on_toolButton_Quit_clicked();              // 退出
 
-    void on_pushButton_Result_clicked();    // 结果
+    void on_pushButton_Result_clicked();            // 结果
 
-    void WorkThreadWorkFinished();          // 工作线程工作完成
+    void WorkThreadWorkFinished();                  // 工作线程工作完成
 
-    void on_pushButton_File_clicked();      // 文件
-    void on_pushButton_PCB_clicked();       // PCB
-    void on_pushButton_Para_clicked();      // 参数
-    void on_pushButton_Lib_clicked();   // 元件库
-    void on_pushButton_Tool_clicked();      // 工具
-    void on_pushButton_Vision_clicked();    // 视觉
-    void on_pushButton_Motion_clicked();    // 运控
-    void on_pushButton_Data_clicked();      // 数据
+    void on_pushButton_File_clicked();              // 文件
+    void on_pushButton_PCB_clicked();               // PCB
+    void on_pushButton_Para_clicked();              // 参数
+    void on_pushButton_Lib_clicked();               // 元件库
+    void on_pushButton_Tool_clicked();              // 工具
+    void on_pushButton_Vision_clicked();            // 视觉
+    void on_pushButton_Motion_clicked();            // 运控
+    void on_pushButton_Data_clicked();              // 数据
+
+    void ShowImageFromVisiondialogToMachineCore(const cv::Mat& image);
+    void VisionMathThreadStartSign();
+    void VisionMathThreadStartWork();
+
+signals:
+    void VisionThreadStartWork();
 };
 

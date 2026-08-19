@@ -26,7 +26,7 @@ TaskList& TaskList::instance()
     return instance;
 }
 
-int TaskList::TaskList_Init()
+int TaskList::TaskList_Init(QString& outFilePath)
 {
     // 弹出文件选择对话框，默认打开当前目录，过滤txt和csv文件
     //QString filePath = QFileDialog::getOpenFileName(
@@ -48,6 +48,9 @@ int TaskList::TaskList_Init()
     {
         return 1;
     }
+
+    // 【核心修改】：将获取到的文件路径赋值给传入的引用参数
+    outFilePath = filePath;
 
     QFile file(filePath);
 
@@ -146,6 +149,11 @@ int TaskList::TaskList_Uninit()
 
 
     return 0;
+}
+
+const QQueue<PickPlace>& TaskList::TaskList_GetQueue() const
+{
+    return m_gTaskQueue;
 }
 
 TaskList::TaskList()

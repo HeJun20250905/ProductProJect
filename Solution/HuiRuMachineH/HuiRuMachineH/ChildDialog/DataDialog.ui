@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>573</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -133,8 +133,8 @@ QLabel {
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>530</y>
-     <width>601</width>
+     <y>360</y>
+     <width>421</width>
      <height>31</height>
     </rect>
    </property>
@@ -147,8 +147,8 @@ QLabel {
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>781</width>
-     <height>521</height>
+     <width>581</width>
+     <height>351</height>
     </rect>
    </property>
    <property name="title">
@@ -159,8 +159,8 @@ QLabel {
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>761</width>
-      <height>201</height>
+      <width>561</width>
+      <height>331</height>
      </rect>
     </property>
     <property name="title">
@@ -169,8 +169,8 @@ QLabel {
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>30</y>
+       <x>20</x>
+       <y>100</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -190,8 +190,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>590</x>
-       <y>70</y>
+       <x>210</x>
+       <y>140</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -211,8 +211,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLineEdit" name="lineEdit_NozzleId">
      <property name="geometry">
       <rect>
-       <x>660</x>
-       <y>70</y>
+       <x>280</x>
+       <y>140</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -224,8 +224,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>590</x>
-       <y>30</y>
+       <x>210</x>
+       <y>100</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -245,8 +245,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLineEdit" name="lineEdit_PickZ">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>70</y>
+       <x>90</x>
+       <y>140</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -259,7 +259,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>70</y>
+       <y>60</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -280,7 +280,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>30</y>
+       <y>20</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -292,8 +292,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLineEdit" name="lineEdit_Width">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>30</y>
+       <x>90</x>
+       <y>100</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -306,7 +306,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>70</y>
+       <y>60</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -327,7 +327,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>70</y>
+       <y>60</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -339,8 +339,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLineEdit" name="lineEdit_Height">
      <property name="geometry">
       <rect>
-       <x>660</x>
-       <y>30</y>
+       <x>280</x>
+       <y>100</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -353,7 +353,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>30</y>
+       <y>20</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -374,7 +374,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>30</y>
+       <y>20</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -395,7 +395,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>70</y>
+       <y>60</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -408,7 +408,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>30</y>
+       <y>20</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -420,8 +420,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>70</y>
+       <x>20</x>
+       <y>140</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -441,8 +441,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QPushButton" name="pushButton_Query">
      <property name="geometry">
       <rect>
-       <x>670</x>
-       <y>160</y>
+       <x>470</x>
+       <y>140</y>
        <width>81</width>
        <height>31</height>
       </rect>
@@ -461,8 +461,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QPushButton" name="pushButton_Update">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>160</y>
+       <x>470</x>
+       <y>100</y>
        <width>81</width>
        <height>31</height>
       </rect>
@@ -481,8 +481,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QPushButton" name="pushButton_Delete">
      <property name="geometry">
       <rect>
-       <x>490</x>
-       <y>160</y>
+       <x>470</x>
+       <y>60</y>
        <width>81</width>
        <height>31</height>
       </rect>
@@ -501,8 +501,8 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
     <widget class="QPushButton" name="pushButton_Insert">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>160</y>
+       <x>470</x>
+       <y>20</y>
        <width>81</width>
        <height>31</height>
       </rect>
@@ -518,26 +518,13 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
       <string>(I)插入</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>220</y>
-      <width>761</width>
-      <height>291</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
     <widget class="QTableWidget" name="tableWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
-       <width>741</width>
-       <height>261</height>
+       <y>190</y>
+       <width>541</width>
+       <height>131</height>
       </rect>
      </property>
      <attribute name="horizontalHeaderVisible">
@@ -706,9 +693,9 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
   <widget class="QPushButton" name="pushButton_Cancel">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>530</y>
-     <width>81</width>
+     <x>520</x>
+     <y>360</y>
+     <width>71</width>
      <height>31</height>
     </rect>
    </property>
@@ -726,9 +713,9 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
   <widget class="QPushButton" name="pushButton_OK">
    <property name="geometry">
     <rect>
-     <x>620</x>
-     <y>530</y>
-     <width>81</width>
+     <x>440</x>
+     <y>360</y>
+     <width>71</width>
      <height>31</height>
     </rect>
    </property>

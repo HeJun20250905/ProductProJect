@@ -1,7 +1,7 @@
 ﻿#include "MachineCore.h"
 #include <QtWidgets/QApplication>
 
-#include "Database.h"
+//#include "Database.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     // 程序退出事件循环后，再安全地关闭数据库
-    Database::instance().Database_Uninit();
+    //Database::instance().Database_Uninit();
 
     return ret;
 }

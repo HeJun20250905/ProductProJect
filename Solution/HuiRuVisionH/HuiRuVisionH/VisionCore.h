@@ -13,6 +13,14 @@
 
 #include <windows.h>
 
+typedef void (*VisionImageCallback)(unsigned char* pData, 
+									int nLen, 
+									int nWidth, 
+									int nHeight, 
+									int nPixelType, 
+									void* pUser
+);
+
 class VisionCore
 {
 public:
@@ -32,6 +40,12 @@ public:
 
 	// 卸载/清理资源 (安全释放DLL内部内存)
 	int VisionCore_Uninit();
+
+	// 设置回调
+	void VisionCore_SetImageCallback(VisionImageCallback callback, void* pUser);
+	
+	// 清除回调
+	void VisionCore_ClearImageCallback();
 
 	// 开始采集图像
     int VisionCore_Start();
@@ -91,7 +105,9 @@ public:
 	int VisionCore_SetTriggerSource(int& source);
 	int VisionCore_GetTriggerSource(int& sourceValue);
 
-
+	// 回调相关的成员变量
+	VisionImageCallback m_callback = nullptr;			// 外部传入的回调函数指针
+	void* m_pCallbackUser = nullptr;					// 外部传入的用户上下文指针
 
 	// 以下成员变量放在public这里是因为需要在静态全局函数中调用
 

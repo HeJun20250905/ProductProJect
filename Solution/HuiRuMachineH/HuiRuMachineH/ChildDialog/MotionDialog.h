@@ -40,4 +40,8 @@ private slots:
     void on_pushButton_IncY_clicked();
     void on_pushButton_IncZ_clicked();
     void on_pushButton_DecZ_clicked();
+
+    void on_pushButton_WorldOrigin_clicked();
+    void on_pushButton_PcbOrigin_clicked();
+    void on_pushButton_FeederOrigin_clicked();
 };

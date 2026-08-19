@@ -1,4 +1,5 @@
 ﻿#include "../../../Include/VisionCore_Export.h"
+
 #include <QCoreApplication>
 #include <QTranslator>
 #include <QDebug>
@@ -114,6 +115,13 @@ extern "C"
             return VISION_RESULT_ERR_QT_ENV;
         }
 
+        // 检测显示窗口句柄
+        if (hWndDisplay == nullptr)
+        {
+            qDebug() << "[VisionCore API] 致命错误: 传入的显示窗口句柄(hWndDisplay)为空";
+            return VISION_RESULT_ERR_UNKNOWN;
+        }
+
         // 翻译家
         EnsureCoreTranslator(app);
 
@@ -204,6 +212,31 @@ extern "C"
         return VISION_RESULT_OK;
     }
 
+    // 注册回调
+    VISIONCTRL_API int Vision_RegisterImageCallback(VisionImageCallback callback, void* pUser)
+    {
+        if (g_initState != InitState::Initialized)
+        {
+            qDebug() << "[VisionCore API] 设备未初始化，无法注册回调";
+            return VISION_RESULT_ERR_NOT_INIT;
+        }
+
+        if (callback == nullptr)
+        {
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+
+        VisionCore::instance().VisionCore_SetImageCallback(callback, pUser);
+        return VISION_RESULT_OK;
+    }
+
+    // 注销回调
+    VISIONCTRL_API int Vision_UnregisterImageCallback()
+    {
+        VisionCore::instance().VisionCore_ClearImageCallback();
+        return VISION_RESULT_OK;
+    }
+
     VISIONCTRL_API int Vision_SetExposureTime(float exposureUs)
     {
         if (g_initState != InitState::Initialized)
@@ -212,7 +245,14 @@ extern "C"
             return VISION_RESULT_ERR_NOT_INIT;
         }
         
-        return VisionCore::instance().VisionCore_SetExposureTime(exposureUs) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (VisionCore::instance().VisionCore_SetExposureTime(exposureUs) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetExposureTime 设置曝光成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetExposureTime 曝光设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetExposureTime(float* exposureUs)
@@ -222,8 +262,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetExposureTime 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!exposureUs) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetExposureTime(*exposureUs) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!exposureUs)
+        {
+            qDebug() << "[VisionCore API] GetExposureTime 传入的参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetExposureTime(*exposureUs) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetExposureTime 获取曝光成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetExposureTime 获取曝光失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetExposureAuto(int mode)
@@ -233,7 +285,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetExposureAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetExposureAuto(mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if(VisionCore::instance().VisionCore_SetExposureAuto(mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetExposureAuto 设置自动曝光成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetExposureAuto 曝光自动设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetExposureAuto(int* mode)
@@ -243,8 +303,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetExposureAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!mode) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetExposureAuto(*mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!mode)
+        {
+            qDebug() << "[VisionCore API] GetExposureAuto 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetExposureAuto(*mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetExposureAuto 获取自动曝光成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetExposureAuto 获取自动曝光失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetGain(float gainDb)
@@ -254,7 +326,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetGain 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetGain(gainDb) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetGain(gainDb) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetGain 设置增益成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetGain 增益设置失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetGain(float* gainDb)
@@ -264,8 +344,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetGain 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!gainDb) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetGain(*gainDb) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!gainDb)
+        {
+            qDebug() << "[VisionCore API] GetGain 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetGain(*gainDb) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetGain 获取增益成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetGain 获取增益失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetGainAuto(int mode)
@@ -275,7 +367,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetGainAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetGainAuto(mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetGainAuto(mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetGainAuto 获取增益成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetGainAuto 增益自动设置失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetGainAuto(int* mode)
@@ -285,8 +385,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetGainAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!mode) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetGainAuto(*mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!mode)
+        {
+            qDebug() << "[VisionCore API] GetGainAuto 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+
+        if (VisionCore::instance().VisionCore_GetGainAuto(*mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetGainAuto 获取增益成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetGainAuto 获取增益失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetBrightness(int brightness)
@@ -296,7 +408,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetBrightness 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetBrightness(brightness) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetBrightness(brightness) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetBrightness 设置亮度成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetBrightness 亮度设置失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetBrightness(int* brightness)
@@ -306,8 +426,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetBrightness 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!brightness) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetBrightness(*brightness) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!brightness)
+        {
+            qDebug() << "[VisionCore API] GetBrightness 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetBrightness(*brightness) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetBrightness 获取亮度成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetBrightness 获取亮度失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetContrast(int contrast)
@@ -317,7 +449,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetContrast 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetContrast(contrast) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetContrast(contrast) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetContrast 设置对比度成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetContrast 对比度设置失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetContrast(int* contrast)
@@ -327,8 +467,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetContrast 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!contrast) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetContrast(*contrast) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!contrast)
+        {
+            qDebug() << "[VisionCore API] GetContrast 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetContrast(*contrast) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetContrast 获取对比度成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetContrast 获取对比度失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetGammaEnable(int enable)
@@ -338,7 +490,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetGammaEnable 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetGammaEnable(enable != 0) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetGammaEnable(enable != 0) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetGammaEnable 设置Gamma成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetGammaEnable Gamma设置失败";
+        return  VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetGammaEnable(int* enable)
@@ -348,11 +508,27 @@ extern "C"
             qDebug() << "[VisionCore API] GetGammaEnable 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!enable) return VISION_RESULT_ERR_INVALID_PARAM;
+        if (!enable)
+        {
+            qDebug() << "[VisionCore API] GetGammaEnable 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
         bool bEnable = false;
         int ret = VisionCore::instance().VisionCore_GetGammaEnable(bEnable);
-        *enable = bEnable ? 1 : 0;
-        return ret == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (bEnable) 
+            *enable = 1;
+        else 
+            *enable = 0;
+
+        if (ret == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetGammaEnable 获取Gamma成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetGammaEnable 获取Gamma失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetGamma(float gamma)
@@ -362,7 +538,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetGamma 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetGamma(gamma) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetGamma(gamma) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetGamma 设置Gamma成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetGamma 设置Gamma失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetGamma(float* gamma)
@@ -372,8 +556,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetGamma 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!gamma) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetGamma(*gamma) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!gamma)
+        {
+            qDebug() << "[VisionCore API] GetGamma 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetGamma(*gamma) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetGamma 获取Gamma成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetGamma 获取Gamma失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetWhiteBalanceAuto(int mode)
@@ -383,7 +579,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetWhiteBalanceAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetWhiteBalanceAuto(mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetWhiteBalanceAuto(mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetWhiteBalanceAuto 设置白平衡成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetWhiteBalanceAuto 白平衡设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetWhiteBalanceAuto(int* mode)
@@ -393,8 +597,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetWhiteBalanceAuto 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!mode) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetWhiteBalanceAuto(*mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!mode)
+        {
+            qDebug() << "[VisionCore API] GetWhiteBalanceAuto 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetWhiteBalanceAuto(*mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetWhiteBalanceAuto 获取白平衡成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetWhiteBalanceAuto 获取白平衡失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetAcquisitionFrameRate(float frameRate)
@@ -404,7 +620,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetAcquisitionFrameRate 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetAcquisitionFrameRate(frameRate) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetAcquisitionFrameRate(frameRate) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetAcquisitionFrameRate 设置帧率成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetAcquisitionFrameRate 帧率设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetAcquisitionFrameRate(float* frameRate)
@@ -414,8 +638,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetAcquisitionFrameRate 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!frameRate) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetAcquisitionFrameRate(*frameRate) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!frameRate)
+        {
+            qDebug() << "[VisionCore API] GetAcquisitionFrameRate 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetAcquisitionFrameRate(*frameRate) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetAcquisitionFrameRate 获取帧率成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetAcquisitionFrameRate 获取帧率失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetPixelFormat(unsigned int pixelFormat)
@@ -425,7 +661,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetPixelFormat 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetPixelFormat(pixelFormat) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetPixelFormat(pixelFormat) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetPixelFormat 设置像素格式成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetPixelFormat 设置像素格式失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetPixelFormat(unsigned int* pixelFormat)
@@ -436,16 +680,22 @@ extern "C"
             return VISION_RESULT_ERR_NOT_INIT;
         }
 
-        // 【修复1】判断指针本身是否为空，而不是判断指针指向的值
+        // 判断指针本身是否为空
         if (!pixelFormat)
         {
             qDebug() << "[VisionCore API] GetPixelFormat 参数错误";
             return VISION_RESULT_ERR_INVALID_PARAM;
         }
 
-        // 【修复2】将解引用后的值传给内部函数
-        int ret = VisionCore::instance().VisionCore_GetPixelFormat(*pixelFormat);
-        return ret == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        // 将解引用后的值传给内部函数
+        if (VisionCore::instance().VisionCore_GetPixelFormat(*pixelFormat) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetPixelFormat 获取像素格式成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetPixelFormat 获取像素格式失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetTriggerMode(int mode)
@@ -455,7 +705,15 @@ extern "C"
             qDebug() << "[VisionCore API] SetTriggerMode 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetTriggerMode(mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (VisionCore::instance().VisionCore_SetTriggerMode(mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetTriggerMode 设置触发模式成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetTriggerMode 触发模式设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetTriggerMode(int* mode)
@@ -465,8 +723,20 @@ extern "C"
             qDebug() << "[VisionCore API] GetTriggerMode 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        if (!mode) return VISION_RESULT_ERR_INVALID_PARAM;
-        return VisionCore::instance().VisionCore_GetTriggerMode(*mode) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (!mode)
+        {
+            qDebug() << "[VisionCore API] GetTriggerMode 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+        
+        if (VisionCore::instance().VisionCore_GetTriggerMode(*mode) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetTriggerMode 获取触发模式成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetTriggerMode 获取触发模式失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_SetTriggerSource(int* sourceValue)
@@ -476,7 +746,21 @@ extern "C"
             qDebug() << "[VisionCore API] SetTriggerSource 设备未初始化，请先初始化设备";
             return VISION_RESULT_ERR_NOT_INIT;
         }
-        return VisionCore::instance().VisionCore_SetTriggerSource(*sourceValue) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+
+        if (!sourceValue)
+        {
+            qDebug() << "[VisionCore API] SetTriggerSource 获取参数为空";
+            return VISION_RESULT_ERR_INVALID_PARAM;
+        }
+
+        if (VisionCore::instance().VisionCore_SetTriggerSource(*sourceValue) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] SetTriggerSource 设置触发源成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] SetTriggerSource 触发源设置失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 
     VISIONCTRL_API int Vision_GetTriggerSource(int* sourceValue)
@@ -492,6 +776,13 @@ extern "C"
             return VISION_RESULT_ERR_INVALID_PARAM;
         }
         
-        return VisionCore::instance().VisionCore_GetTriggerSource(*sourceValue) == 0 ? VISION_RESULT_OK : VISION_RESULT_ERR_UNKNOWN;
+        if (VisionCore::instance().VisionCore_GetTriggerSource(*sourceValue) == VISION_RESULT_OK)
+        {
+            qDebug() << "[VisionCore API] GetTriggerSource 获取触发源成功";
+            return VISION_RESULT_OK;
+        }
+
+        qDebug() << "[VisionCore API] GetTriggerSource 获取触发源失败";
+        return VISION_RESULT_ERR_UNKNOWN;
     }
 }

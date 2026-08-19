@@ -40,21 +40,25 @@ private:
 
     QTimer* m_stopTimer = nullptr;
 
-    float m_targetPosX = 0.0;                   // X目标位置
+    float m_targetPosX = 0.0;                    // X目标位置
     float m_speedX = 500.0;                      // X速度
-    float m_currentPosX = 0.0;                  // X当前位置
+    float m_currentPosX = 0.0;                   // X当前位置
 
-    float m_targetPosY = 0.0;                   // Y目标位置
+    float m_targetPosY = 0.0;                    // Y目标位置
     float m_speedY = 500.0;                      // Y速度
-    float m_currentPosY = 0.0;                  // Y当前位置
+    float m_currentPosY = 0.0;                   // Y当前位置
 
-    float m_targetPosZ = 0.0;                   // Z目标位置
+    float m_targetPosZ = 0.0;                    // Z目标位置
     float m_speedZ = 500.0;                      // Z速度
-    float m_currentPosZ = 0.0;                  // Z当前位置
+    float m_currentPosZ = 0.0;                   // Z当前位置
 
-    float m_targetPosR = 0.0;                   // R目标位置
+    float m_targetPosR = 0.0;                    // R目标位置
     float m_speedR = 500.0;                      // R速度
-    float m_currentPosR = 0.0;                  // R当前位置
+    float m_currentPosR = 0.0;                   // R当前位置
+
+    float m_feederZeroOffsetX = 0.0;             // 飞达位置X
+    float m_feederZeroOffsetY = 0.0;             // 飞达位置Y
+    float m_feederZeroOffsetZ = 0.0;             // 飞达位置Z
 
     float m_tolerance = 0.05;                   // 0.05个单位误差
 
@@ -65,11 +69,6 @@ private:
 
     // 工具函数：检查轴是否到位
     int IsAtPosition(int axis, float targetPos, float* currentPos);
-
-    float m_feederPosX = 0.0;
-    float m_feederPosY = 0.0;
-    float m_feederPosZ = 0.0;
-    float m_feederPosR = 0.0;
 
 private slots:
     void TimerSlot();

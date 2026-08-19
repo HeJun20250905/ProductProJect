@@ -6,6 +6,7 @@
 
 #include "TaskList.h"
 #include "FeederPos.h"
+#include "SpatialCube.h"
 
 #include "../../../Include/MotionCore_Export.h"
 
@@ -118,11 +119,13 @@ void WorkThread::TimerSlot()
         {
             m_step = Step::move_xy_feeder;          // 切换状态：准备开始移动XY
 
-            m_targetPosX = m_currentTask->PickX;
-            m_targetPosY = m_currentTask->PickY;
-            m_targetPosZ = m_currentTask->PickZ;
+            m_targetPosX = m_currentTask->PickX + SpatialCube::instance().m_pcbZeroOffsetX;
+            m_targetPosY = m_currentTask->PickY + SpatialCube::instance().m_pcbZeroOffsetY;
+            m_targetPosZ = m_currentTask->PickZ + SpatialCube::instance().m_pcbZeroOffsetZ;
 
-            FeederPos::instance().FeederPos_GetFeederPos(m_feederPosX, m_feederPosY, m_feederPosZ, m_feederPosR);
+            m_feederZeroOffsetX = SpatialCube::instance().m_feederZeroOffsetX;
+            m_feederZeroOffsetY = SpatialCube::instance().m_feederZeroOffsetY;
+            m_feederZeroOffsetZ = SpatialCube::instance().m_feederZeroOffsetZ;
 
             qDebug() << "[WorkThread] 领取新任务:" 
                 << m_currentTask->PickName 
@@ -133,9 +136,9 @@ void WorkThread::TimerSlot()
                 << "目标Z:"
                 << m_currentTask->PickZ
                 << "飞达:"
-                << m_feederPosX 
-                << m_feederPosY 
-                << m_feederPosZ 
+                << m_feederZeroOffsetX
+                << m_feederZeroOffsetY
+                << m_feederZeroOffsetZ
                 ;
         }
         else 
@@ -153,7 +156,7 @@ void WorkThread::TimerSlot()
     {
     case Step::move_xy_feeder:
         // 发起移动指令
-        Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_feederPosX, m_feederPosY, 500.0);
+        Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_feederZeroOffsetX, m_feederZeroOffsetY, 500.0);
         qDebug() << "[WorkThread] FEEDER XY 指令发送";
         m_step = Step::wait_xy_feeder;
         // 标志位
@@ -168,7 +171,7 @@ void WorkThread::TimerSlot()
             break; // 直接跳出，50ms硬件反应时间
         }
         // 检查XY轴是否到位
-        if (IsAtPosition(AXIS_X, m_feederPosX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_feederPosY, &m_currentPosY) == 0)
+        if (IsAtPosition(AXIS_X, m_feederZeroOffsetX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_feederZeroOffsetY, &m_currentPosY) == 0)
         {
             qDebug() << "[WorkThread] FEEDER X Y 到位";
             m_step = Step::move_z_down_feeder;
@@ -177,7 +180,7 @@ void WorkThread::TimerSlot()
 
     case Step::move_z_down_feeder:
         // Z轴下降到取料高度
-        Motion_MoveAbs(AXIS_Z, m_feederPosZ, 500.0);
+        Motion_MoveAbs(AXIS_Z, m_feederZeroOffsetZ, 500.0);
         qDebug() << "[WorkThread] FEEDER Z 下降指令发送";
         m_step = Step::wait_z_down_feeder;
         // 标志位
@@ -191,7 +194,7 @@ void WorkThread::TimerSlot()
             m_hasStarted = true;
             break; // 直接跳出，50ms硬件反应时间
         }
-        if (IsAtPosition(AXIS_Z, m_feederPosZ, &m_currentPosZ) == 0)
+        if (IsAtPosition(AXIS_Z, m_feederZeroOffsetZ, &m_currentPosZ) == 0)
         {
             qDebug() << "[WorkThread] FEEDER Z 轴下降到位";
 

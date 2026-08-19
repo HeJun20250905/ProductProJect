@@ -3,6 +3,8 @@
 
 #include "../../../Include/MotionCore_Export.h"
 
+#include "SpatialCube.h"
+
 #ifdef _DEBUG
 #define  LIB_PATH     "..\\..\\..\\Library\\Win32\\Debug"
 #else
@@ -262,4 +264,67 @@ void MotionDialog::on_pushButton_DecZ_clicked()
     ui->pushButton_DecZ->setEnabled(false);
 
     m_moveTimer->start(50);
+}
+
+void MotionDialog::on_pushButton_WorldOrigin_clicked()
+{
+    // 获取世界坐标偏移量的指针
+    float& x = SpatialCube::instance().m_worldZeroOffsetX;
+    float& y = SpatialCube::instance().m_worldZeroOffsetY;
+    float& z = SpatialCube::instance().m_worldZeroOffsetZ;
+
+    // 读取当前电机位置
+    Motion_GetDpos(AXIS_X, &x);
+    Motion_GetDpos(AXIS_Y, &y);
+    Motion_GetDpos(AXIS_Z, &z);
+
+    // 界面显示标定结果（保留2位小数）
+    ui->label_Info->setText(QString("世界坐标原点标定完成: X=%1, Y=%2, Z=%3")
+        .arg(x, 0, 'f', 2)
+        .arg(y, 0, 'f', 2)
+        .arg(z, 0, 'f', 2));
+
+    qDebug() << "[MotionDialog] 世界坐标原点标定完成: X=" << x << ", Y=" << y << ", Z=" << z;
+}
+
+void MotionDialog::on_pushButton_PcbOrigin_clicked()
+{
+    // 获取PCB坐标偏移量的指针
+    float& x = SpatialCube::instance().m_pcbZeroOffsetX;
+    float& y = SpatialCube::instance().m_pcbZeroOffsetY;
+    float& z = SpatialCube::instance().m_pcbZeroOffsetZ;
+
+    // 读取当前电机位置
+    Motion_GetDpos(AXIS_X, &x);
+    Motion_GetDpos(AXIS_Y, &y);
+    Motion_GetDpos(AXIS_Z, &z);
+
+    // 界面显示标定结果（保留2位小数）
+    ui->label_Info->setText(QString("PCB坐标原点标定完成: X=%1, Y=%2, Z=%3")
+        .arg(x, 0, 'f', 2)
+        .arg(y, 0, 'f', 2)
+        .arg(z, 0, 'f', 2));
+
+    qDebug() << "[MotionDialog] PCB坐标原点标定完成: X=" << x << ", Y=" << y << ", Z=" << z;
+}
+
+void MotionDialog::on_pushButton_FeederOrigin_clicked()
+{
+    // 获取Feeder坐标偏移量的指针
+    float& x = SpatialCube::instance().m_feederZeroOffsetX;
+    float& y = SpatialCube::instance().m_feederZeroOffsetY;
+    float& z = SpatialCube::instance().m_feederZeroOffsetZ;
+
+    // 读取当前电机位置
+    Motion_GetDpos(AXIS_X, &x);
+    Motion_GetDpos(AXIS_Y, &y);
+    Motion_GetDpos(AXIS_Z, &z);
+
+    // 界面显示标定结果（保留2位小数）
+    ui->label_Info->setText(QString("Feeder坐标原点标定完成: X=%1, Y=%2, Z=%3")
+        .arg(x, 0, 'f', 2)
+        .arg(y, 0, 'f', 2)
+        .arg(z, 0, 'f', 2));
+
+    qDebug() << "[MotionDialog] Feeder坐标原点标定完成: X=" << x << ", Y=" << y << ", Z=" << z;
 }

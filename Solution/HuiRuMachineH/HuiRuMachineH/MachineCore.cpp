@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QDir>
+#include <QCloseEvent>
 
 #include "HuiRuLoggerH.h"
 #include "WorkThread.h"
@@ -32,6 +33,11 @@
 
 #pragma comment(lib,  LIB_PATH"\\VisionCore.lib")
 #pragma comment(lib,  LIB_PATH"\\MotionCore.lib")
+
+#include "opencv2/core/core_c.h"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
 
 #define WIN32_LEAD_AND_MEAN
 #include <windows.h>
@@ -72,19 +78,21 @@ MachineCore::MachineCore(QWidget *parent)
         ::MessageBoxW((HWND)this->winId(), L"[MachineCore] 初始化失败！", L"提示", MB_OK | MB_ICONERROR);
         //return;
     }
+
+    this->OnInitDialogStyle();
 }
 
 MachineCore::~MachineCore()
 {
-    // 卸载设备
+    // 卸载Motion设备
     qDebug() << "[MachineCore] Motion: 正在断开连接...";
     Motion_UninitDevice();
     qDebug() << "[MachineCore] Motion: 断开连接完成";
 
-    // 卸载库
-    qDebug() << "[MachineCore] Vision: 卸载中...";
-    Vision_UninitDevice();
-    qDebug() << "[MachineCore] Vision: 卸载完成";
+    //// 卸载Vision库
+    //qDebug() << "[MachineCore] Vision: 卸载中...";
+    //Vision_UninitDevice();
+    //qDebug() << "[MachineCore] Vision: 卸载完成";
 
     delete ui;
 }
@@ -108,7 +116,7 @@ void MachineCore::on_toolButton_Start_clicked()
     // ###################### 动态创建子线程和工作对象 ######################
     
     // 防止重复点击
-    if (workerThread && workerThread->isRunning()) 
+    if (m_workerThread && m_workerThread->isRunning())
     {
         qDebug() << "[MachineCore] 线程正在运行，请勿重复点击！";
         ::MessageBoxW((HWND)this->winId(), L"[MachineCore] 线程正在运行，请勿重复点击！", L"提示", MB_OK | MB_ICONINFORMATION);
@@ -116,25 +124,27 @@ void MachineCore::on_toolButton_Start_clicked()
     }
 
     // 创建工作对象（Worker不能指定父对象）
-    workerThread = new QThread();
-    WorkThread* worker = new WorkThread();
+    m_workerThread = new QThread();
+    m_worker = new WorkThread();
+
+    //m_workerThread->setObjectName("WorkThread");
 
     // 将工作对象移动到子线程
-    worker->moveToThread(workerThread);
+    m_worker->moveToThread(m_workerThread);
 
     // 当线程启动时，自动调用worker的doWork槽函数
-    connect(workerThread, &QThread::started, worker, &WorkThread::doWork);
+    connect(m_workerThread, &QThread::started, m_worker, &WorkThread::doWork);
 
     // 当工作对象完成工作时，自动调用WorkThreadWorkFinished槽函数
-    connect(worker, &WorkThread::workFinished, this, &MachineCore::WorkThreadWorkFinished);
+    connect(m_worker, &WorkThread::workFinished, this, &MachineCore::WorkThreadWorkFinished);
 
     // 当任务完成时，清理资源（可选，根据业务需求决定）
-    connect(worker, &WorkThread::workFinished, workerThread, &QThread::quit);
-    connect(worker, &WorkThread::workFinished, worker, &WorkThread::deleteLater);
-    connect(workerThread, &QThread::finished, workerThread, &QObject::deleteLater);
+    connect(m_worker, &WorkThread::workFinished, m_workerThread, &QThread::quit);
+    connect(m_worker, &WorkThread::workFinished, m_worker, &WorkThread::deleteLater);
+    connect(m_workerThread, &QThread::finished, m_workerThread, &QObject::deleteLater);
 
     // 启动子线程
-    workerThread->start();
+    m_workerThread->start();
 
     ui->label_Top->setText("WorkThreadWorking");
 }
@@ -261,25 +271,25 @@ int MachineCore::OnInitVision()
 {
     qDebug() << "[MachineCore] OnInitVision InitVision";
 
-    WId nativeHandle = ui->label_Video->winId();
-    int result = Vision_InitDevice(reinterpret_cast<void*>(nativeHandle));
-    if (result != VISION_RESULT_OK)
-    {
-        qDebug() << "[VisionDialog] OnInitVision 初始化失败，错误码:" << result;
-        return MACHINECORE_RESULT_ERROR_VISION;
-    }
+    //WId nativeHandle = ui->label_Video->winId();
+    //int result = Vision_InitDevice(reinterpret_cast<void*>(nativeHandle));
+    //if (result != VISION_RESULT_OK)
+    //{
+    //    qDebug() << "[VisionDialog] OnInitVision 初始化失败，错误码:" << result;
+    //    return MACHINECORE_RESULT_ERROR_VISION;
+    //}
 
-    qDebug() << "[VisionDialog] OnInitVision 初始化成功，显示窗口已绑定";
+    //qDebug() << "[VisionDialog] OnInitVision 初始化成功，显示窗口已绑定";
 
-    result = Vision_StartGrabbing();
-    if (result != VISION_RESULT_OK)
-    {
-        qDebug() << "[VisionDialog] OnInitVision 启动采集失败，错误码:" << result;
-        
-        return MACHINECORE_RESULT_ERROR_VISION;
-    }
+    //result = Vision_StartGrabbing();
+    //if (result != VISION_RESULT_OK)
+    //{
+    //    qDebug() << "[VisionDialog] OnInitVision 启动采集失败，错误码:" << result;
+    //    
+    //    return MACHINECORE_RESULT_ERROR_VISION;
+    //}
 
-    qDebug() << "[VisionDialog] OnInitVision 启动采集成功";
+    //qDebug() << "[VisionDialog] OnInitVision 启动采集成功";
 
     return MACHINECORE_RESULT_SUCCESS;
 }
@@ -312,19 +322,34 @@ int MachineCore::OnInitParameter()
     return MACHINECORE_RESULT_SUCCESS;
 }
 
+int MachineCore::OnInitDialogStyle()
+{
+    // 列标高度设置
+    ui->tableWidget->horizontalHeader()->setFixedHeight(25);
+
+    // 设置第一列为固定模式，固定宽度
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+    ui->tableWidget->setColumnWidth(0, 40);
+    return MACHINECORE_RESULT_SUCCESS;
+}
+
+void MachineCore::closeEvent(QCloseEvent* event)
+{
+    qDebug() << "[MachineCore] closeEvent called";
+
+    event->accept();
+}
+
 void MachineCore::on_toolButton_Quit_clicked()
 {
     qDebug() << "[MachineCore] Stop";
 
-    if (workerThread && workerThread->isRunning()) 
+    if (m_workerThread && m_workerThread->isRunning())
     {
         qDebug() << "[MachineCore] 正在安全停止子线程...";
 
-        workerThread->quit();
-        workerThread->wait(); // 阻塞等待线程结束
-
-        // 关键修改：线程结束后，将指针置空，防止后续误用或重复释放
-        workerThread = nullptr;
+        m_workerThread->quit();
+        m_workerThread->wait(); // 阻塞等待线程结束
 
         qDebug() << "[MachineCore] 子线程已安全停止";
         ::MessageBoxW((HWND)this->winId(), L"[MachineCore] 子线程已安全停止", L"提示", MB_OK | MB_ICONINFORMATION);
@@ -405,6 +430,11 @@ void MachineCore::on_pushButton_Tool_clicked()
 void MachineCore::on_pushButton_Vision_clicked()
 {
     VisionDialog visionDialog(this);
+
+    connect(&visionDialog, &VisionDialog::sigImageReady, this, &MachineCore::ShowImageFromVisiondialogToMachineCore);
+    connect(&visionDialog, &VisionDialog::sigMathThread, this, &MachineCore::VisionMathThreadStartSign);
+    connect(this, &MachineCore::VisionThreadStartWork, this, &MachineCore::VisionMathThreadStartWork);
+
     visionDialog.exec();
 }
 
@@ -418,5 +448,59 @@ void MachineCore::on_pushButton_Data_clicked()
 {
     DataDialog dataDialog(this);
     dataDialog.exec();
+}
+
+void MachineCore::ShowImageFromVisiondialogToMachineCore(const cv::Mat& image)
+{
+    // 安全检查
+    if (image.empty())
+    {
+        qDebug() << "[MachineCore] ShowImageFromVisiondialogToMachineCore: image is empty";
+        return;
+    }
+
+    // cv::Mat转换为QImage
+    //QImage qImg(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8);
+    QImage qImg = QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8).copy();
+
+    // 更新主界面的 UI
+    if (ui->label_Video)
+    {
+        ui->label_Video->setPixmap(QPixmap::fromImage(qImg));
+
+        // 自适应图片大小
+        ui->label_Video->setScaledContents(true);
+    }
+
+    // 分别输出 width 和 height，这个会影响性能
+    // qDebug() << "[MachineCore] ShowImageFromVisiondialogToMachineCore: image size: " << image.cols << image.rows;
+
+    if (m_visionThreadSign)
+    {
+        m_visionThreadSign = false;
+
+        {
+            QMutexLocker locker(&m_visionMutex);
+            
+            if (m_visionFrame) 
+            {
+                delete m_visionFrame;
+            }
+            
+            m_visionFrame = new cv::Mat(image.clone());
+        }
+
+        emit VisionThreadStartWork();
+    }
+}
+
+void MachineCore::VisionMathThreadStartSign()
+{
+    m_visionThreadSign = true;
+}
+
+void MachineCore::VisionMathThreadStartWork()
+{
+    qDebug() << "VisionMathThreadStartWork";
 }
 

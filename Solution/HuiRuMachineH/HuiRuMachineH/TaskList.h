@@ -28,7 +28,7 @@ public:
 	TaskList& operator=(TaskList&&) = delete;
 
 	//初始化核心组件
-	int TaskList_Init();
+	int TaskList_Init(QString& outFilePath);
 
 	// 添加任务
 	int TaskList_AddTask(PickPlace task);
@@ -38,6 +38,9 @@ public:
 
 	// 卸载/清理资源 (安全释放DLL内部内存)
 	int TaskList_Uninit();
+
+    // 获取任务队列
+	const QQueue<PickPlace>& TaskList_GetQueue() const;
 
 private:
 	// 构造函数和析构函数私有化

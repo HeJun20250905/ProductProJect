@@ -70,12 +70,22 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
       <OutputFile>..\..\..\Output\Win32\Debug\MachineCore.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\OpenCV341_Win32\Library\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_aruco341d.lib;opencv_bgsegm341d.lib;opencv_bioinspired341d.lib;opencv_calib3d341d.lib;opencv_ccalib341d.lib;opencv_core341d.lib;opencv_datasets341d.lib;opencv_dnn341d.lib;opencv_dnn_objdetect341d.lib;opencv_dpm341d.lib;opencv_face341d.lib;opencv_features2d341d.lib;opencv_flann341d.lib;opencv_fuzzy341d.lib;opencv_hfs341d.lib;opencv_highgui341d.lib;opencv_imgcodecs341d.lib;opencv_imgproc341d.lib;opencv_img_hash341d.lib;opencv_line_descriptor341d.lib;opencv_ml341d.lib;opencv_objdetect341d.lib;opencv_optflow341d.lib;opencv_phase_unwrapping341d.lib;opencv_photo341d.lib;opencv_plot341d.lib;opencv_reg341d.lib;opencv_rgbd341d.lib;opencv_saliency341d.lib;opencv_shape341d.lib;opencv_stereo341d.lib;opencv_stitching341d.lib;opencv_structured_light341d.lib;opencv_superres341d.lib;opencv_surface_matching341d.lib;opencv_text341d.lib;opencv_tracking341d.lib;opencv_video341d.lib;opencv_videoio341d.lib;opencv_videostab341d.lib;opencv_xfeatures2d341d.lib;opencv_ximgproc341d.lib;opencv_xobjdetect341d.lib;opencv_xphoto341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\OpenCV341_Win32\Include;$(ProjectDir)..\OpenCV341_Win32\Include\opencv;$(ProjectDir)..\OpenCV341_Win32\Include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
       <OutputFile>..\..\..\Output\Win32\Release\MachineCore.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\OpenCV341_Win32\Library\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_aruco341.lib;opencv_bgsegm341.lib;opencv_bioinspired341.lib;opencv_calib3d341.lib;opencv_ccalib341.lib;opencv_core341.lib;opencv_datasets341.lib;opencv_dnn341.lib;opencv_dnn_objdetect341.lib;opencv_dpm341.lib;opencv_face341.lib;opencv_features2d341.lib;opencv_flann341.lib;opencv_fuzzy341.lib;opencv_hfs341.lib;opencv_highgui341.lib;opencv_imgcodecs341.lib;opencv_imgproc341.lib;opencv_img_hash341.lib;opencv_line_descriptor341.lib;opencv_ml341.lib;opencv_objdetect341.lib;opencv_optflow341.lib;opencv_phase_unwrapping341.lib;opencv_photo341.lib;opencv_plot341.lib;opencv_reg341.lib;opencv_rgbd341.lib;opencv_saliency341.lib;opencv_shape341.lib;opencv_stereo341.lib;opencv_stitching341.lib;opencv_structured_light341.lib;opencv_superres341.lib;opencv_surface_matching341.lib;opencv_text341.lib;opencv_tracking341.lib;opencv_video341.lib;opencv_videoio341.lib;opencv_videostab341.lib;opencv_xfeatures2d341.lib;opencv_ximgproc341.lib;opencv_xobjdetect341.lib;opencv_xphoto341.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\OpenCV341_Win32\Include;$(ProjectDir)..\OpenCV341_Win32\Include\opencv;$(ProjectDir)..\OpenCV341_Win32\Include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
     <ClCompile>

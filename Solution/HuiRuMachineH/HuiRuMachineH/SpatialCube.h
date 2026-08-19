@@ -8,7 +8,6 @@ public:
 	// 获取单例实例
 	static SpatialCube& instance();
 
-
 	// 禁止赋值和拷贝
 	SpatialCube(const SpatialCube&) = delete;
 	SpatialCube& operator=(const SpatialCube&) = delete;
@@ -16,7 +15,6 @@ public:
 	// 禁用移动构造和移动赋值
 	SpatialCube(SpatialCube&&) = delete;
 	SpatialCube& operator=(SpatialCube&&) = delete;
-
 
 	// 初始化核心组件
 	int SpatialCube_Init();
@@ -33,20 +31,23 @@ public:
 	// 卸载/清理资源 (安全释放DLL内部内存)
 	int SpatialCube_Uninit();
 
+public:
+	float m_worldZeroOffsetX = 0.0;						// 世界坐标系原点X电机偏移量
+	float m_worldZeroOffsetY = 0.0;						// 世界坐标系原点Y电机偏移量
+	float m_worldZeroOffsetZ = 0.0;						// 世界坐标系原点Z电机偏移量
+
+	float m_pcbZeroOffsetX = 0.0;						// PCB坐标系原点X电机偏移量
+	float m_pcbZeroOffsetY = 0.0;						// PCB坐标系原点Y电机偏移量
+    float m_pcbZeroOffsetZ = 0.0;						// PCB坐标系原点Z电机偏移量
+
+	float m_feederZeroOffsetX = 0.0;					// Feeder坐标系原点X电机偏移量
+	float m_feederZeroOffsetY = 0.0;					// Feeder坐标系原点Y电机偏移量
+    float m_feederZeroOffsetZ = 0.0;					// Feeder坐标系原点Z电机偏移量
+
 private:
 	// 构造函数和析构函数私有化
 	explicit SpatialCube();
 	~SpatialCube();
-
-	float m_world_xZeroOff = 0.0;					// 世界坐标系原点X电机偏移量
-    float m_world_yZeroOff = 0.0;					// 世界坐标系原点Y电机偏移量
-
-	float m_pcb_xZeroOff = 0.0;						// PCB坐标系原点X电机偏移量
-    float m_pcb_yZeroOff = 0.0;						// PCB坐标系原点Y电机偏移量
-
-    float m_feeder_xZeroOff = 0.0;					// Feeder坐标系原点X电机偏移量
-    float m_feeder_yZeroOff = 0.0;					// Feeder坐标系原点Y电机偏移量
-    
 
 	mutable QMutex m_mutex;               // 【关键】多线程互斥锁 (mutable允许在const函数中加锁)
 };

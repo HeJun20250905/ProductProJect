@@ -11,6 +11,11 @@
 
 #pragma comment(lib,  LIB_PATH   "\\MvCameraControl.lib")
 
+//#include "opencv2/core/core_c.h"
+//#include "opencv2/imgcodecs.hpp"
+//#include "opencv2/highgui.hpp"
+//#include "opencv2/imgproc.hpp"
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)    
 # pragma execution_character_set("utf-8")    
 #endif
@@ -116,7 +121,7 @@ int VisionCore::VisionCore_Uninit()
         m_grabThread = nullptr;
     }
 
-    // 释放图像内存，防止下次 Start 时内存泄漏
+    // 释放图像内存，防止下次Start时内存泄漏
     {
         QMutexLocker locker(&m_mutex);
         if (m_frameData != nullptr)
@@ -139,6 +144,22 @@ int VisionCore::VisionCore_Uninit()
     MV_CC_Finalize();
 
     return 0;
+}
+
+void VisionCore::VisionCore_SetImageCallback(VisionImageCallback callback, void* pUser)
+{
+    QMutexLocker locker(&m_mutex); // 保证线程安全
+    m_callback = callback;
+    m_pCallbackUser = pUser;
+    qDebug() << "[VisionCore] 图像回调已注册";
+}
+
+void VisionCore::VisionCore_ClearImageCallback()
+{
+    QMutexLocker locker(&m_mutex); // 保证线程安全
+    m_callback = nullptr;
+    m_pCallbackUser = nullptr;
+    qDebug() << "[VisionCore] 图像回调已注销";
 }
 
 // 线程函数
@@ -176,25 +197,14 @@ unsigned int __stdcall GrabThreadProc(void* pUser)
                 pThis->m_frameData = new unsigned char[pThis->m_nFrameDataSize];
             }
 
-            // ★ 加在这里：把数据拷出来，供机器视觉处理用
+            // ★ 把数据拷出来，供机器视觉处理用
             {
                 QMutexLocker locker(&pThis->m_mutex);
                 memcpy(pThis->m_frameData, stFrame.pBufAddr, stFrame.stFrameInfo.nFrameLenEx);
                 memcpy(&pThis->m_frameInfo, &stFrame.stFrameInfo, sizeof(MV_FRAME_OUT_INFO_EX));
             }
             
-            qDebug() << "分辨率:" << pThis->m_frameInfo.nWidth << "x" << pThis->m_frameInfo.nHeight;
-            
-            // ★ 在这里把数据转成 cv::Mat，供机器视觉处理用
-            //cv::Mat srcImage;
-            //if (g_frameInfo.enPixelType == PixelType_Gvsp_Mono8)
-            //{
-            //    srcImage = cv::Mat(g_frameInfo.nHeight, g_frameInfo.nWidth, CV_8UC1, g_frameData);
-            //}
-            //else if (g_frameInfo.enPixelType == PixelType_Gvsp_RGB8_Packed)
-            //{
-            //    srcImage = cv::Mat(g_frameInfo.nHeight, g_frameInfo.nWidth, CV_8UC3, g_frameData);
-            //}
+            // qDebug() << "[VisionCore] GrabThreadProc 分辨率:" << pThis->m_frameInfo.nWidth << "x" << pThis->m_frameInfo.nHeight;
 
             // SDK 直接渲染到窗口，不拷贝、不转换
             MV_CC_IMAGE stImage = { 0 };
@@ -206,6 +216,26 @@ unsigned int __stdcall GrabThreadProc(void* pUser)
             MV_CC_DisplayOneFrameEx2(pThis->m_handle, pThis->m_display, &stImage, 0);
 
             MV_CC_FreeImageBuffer(pThis->m_handle, &stFrame);
+        }
+
+        // 触发外部回调（注意：回调在子线程执行，外部不能做耗时操作！）
+        VisionImageCallback cb = nullptr;
+        void* userPtr = nullptr;
+
+        {
+            QMutexLocker locker(&pThis->m_mutex);
+            cb = pThis->m_callback;
+            userPtr = pThis->m_pCallbackUser;
+        }
+
+        if (cb != nullptr)
+        {
+                cb(pThis->m_frameData,
+                pThis->m_frameInfo.nFrameLenEx,
+                pThis->m_frameInfo.nWidth,
+                pThis->m_frameInfo.nHeight,
+                pThis->m_frameInfo.enPixelType,
+                userPtr);
         }
     }
     return 0;

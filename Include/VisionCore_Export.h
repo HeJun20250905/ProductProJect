@@ -26,6 +26,22 @@ extern "C"
     VISIONCTRL_API int Vision_StopGrabbing();                                       // 停止抓图
 	VISIONCTRL_API int Vision_UninitDevice();                                       // 卸载/清理资源 (安全释放DLL内部内存)
 
+    // 定义图像回调函数类型
+    // pData: 图像数据指针, nLen: 数据长度, nWidth: 宽, nHeight: 高, nPixelType: 像素格式, pUser: 用户自定义指针
+    typedef void (*VisionImageCallback)(unsigned char* pData, 
+                                        int nLen, 
+                                        int nWidth, 
+                                        int nHeight, 
+                                        int nPixelType, 
+                                        void* pUser
+    );
+
+    // 注册回调
+    VISIONCTRL_API int Vision_RegisterImageCallback(VisionImageCallback callback, void* pUser);
+    
+    // 注销回调
+    VISIONCTRL_API int Vision_UnregisterImageCallback();
+
     VISIONCTRL_API int Vision_SetExposureTime(float exposureUs);                    // 设置曝光时间
     VISIONCTRL_API int Vision_GetExposureTime(float* exposureUs);                   // 获取曝光时间
     VISIONCTRL_API int Vision_SetExposureAuto(int mode);                            // 设置曝光自动模式

@@ -16,7 +16,9 @@ public:
 private:
     Ui::FileDialog* ui;
 
+    int ShowDataOnLineEdit();
+
 private slots:
     void on_pushButton_Cancel_clicked();
-    void on_pushButton_AddFile_clicked();
+    void on_pushButton_LoadFile_clicked();
 };

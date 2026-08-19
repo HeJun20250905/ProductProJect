@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>573</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,8 +121,8 @@ QLabel {
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>530</y>
-     <width>601</width>
+     <y>360</y>
+     <width>401</width>
      <height>31</height>
     </rect>
    </property>
@@ -133,8 +133,8 @@ QLabel {
   <widget class="QPushButton" name="pushButton_Cancel">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>530</y>
+     <x>510</x>
+     <y>360</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -153,8 +153,8 @@ QLabel {
   <widget class="QPushButton" name="pushButton_OK">
    <property name="geometry">
     <rect>
-     <x>620</x>
-     <y>530</y>
+     <x>420</x>
+     <y>360</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -175,8 +175,8 @@ QLabel {
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>781</width>
-     <height>521</height>
+     <width>581</width>
+     <height>351</height>
     </rect>
    </property>
    <property name="title">
