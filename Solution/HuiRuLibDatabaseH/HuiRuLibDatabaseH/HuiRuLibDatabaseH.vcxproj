@@ -61,9 +61,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>LibDatabase</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <OutDir>..\..\..\Output\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>LibDatabase</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

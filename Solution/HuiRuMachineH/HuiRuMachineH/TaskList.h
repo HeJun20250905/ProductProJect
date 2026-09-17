@@ -10,7 +10,7 @@ struct PickPlace
 	float PickX;					// X 坐标
 	float PickY;					// Y 坐标
     float PickZ;					// Z 坐标
-	float PickR;					// 贴装角度
+	float PickR;					// 贴装角度R
 };
 
 class TaskList

@@ -317,7 +317,7 @@ QFrame[frameShape=&quot;5&quot;] {
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>261</width>
+       <width>251</width>
        <height>181</height>
       </rect>
      </property>
@@ -329,16 +329,16 @@ QFrame[frameShape=&quot;5&quot;] {
       </font>
      </property>
      <property name="text">
-      <string>TextLabel</string>
+      <string>Source Image</string>
      </property>
     </widget>
     <widget class="QTableWidget" name="tableWidget">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>20</y>
-       <width>391</width>
-       <height>326</height>
+       <x>280</x>
+       <y>215</y>
+       <width>401</width>
+       <height>131</height>
       </rect>
      </property>
      <attribute name="horizontalHeaderVisible">
@@ -516,7 +516,7 @@ QFrame[frameShape=&quot;5&quot;] {
     <widget class="QFrame" name="frame">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>270</x>
        <y>15</y>
        <width>1</width>
        <height>336</height>
@@ -635,6 +635,46 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
       </rect>
      </property>
     </widget>
+    <widget class="QLabel" name="label_Result">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>20</y>
+       <width>261</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Result Image</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_Math">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>170</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>视觉算法</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_Top">
     <property name="geometry">
@@ -665,7 +705,7 @@ padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上�
       </font>
      </property>
      <property name="text">
-      <string>TextLabel</string>
+      <string>Message Label</string>
      </property>
     </widget>
    </widget>

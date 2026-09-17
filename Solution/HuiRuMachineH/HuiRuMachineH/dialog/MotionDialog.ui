@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MotionDialog</class>
+ <widget class="QDialog" name="MotionDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* ================== QPushButton &amp; QToolButton 开始 ================== */
+
+/* 按钮默认状态 */
+QPushButton, QToolButton {
+    border: 1px solid #c0c0c0;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #e0e0e0);
+    border-radius: 5px; 
+    outline: none;                  
+    padding: 0px;                   
+}
+
+/* 按钮鼠标悬停时 */
+QPushButton:hover, QToolButton:hover {
+    border: 1px solid #a0a0a0;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #d0d0d0);
+}
+
+/* 按钮鼠标按下时 */
+QPushButton:pressed, QToolButton:pressed {
+    border: 1px solid #808080;      
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #d0d0d0, stop:1 #e0e0e0);
+}
+
+/* ================== QLineEdit 开始 ================== */
+
+/* 默认状态 */
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #D0D0D0;     
+    border-radius: 4px;            
+    padding: 2px 2px;              
+    color: #222222;                
+    min-height: 20px;              
+}
+
+/* 获得焦点时 */
+QLineEdit:focus {
+    border: 1px solid #007AFF;     
+    background-color: #E8F4FF;     
+}
+
+/* 禁用状态 */
+QLineEdit:disabled {
+    background-color: #eef1f5;     
+    color: #9aa0a6;                
+    border: 1px solid #d3d8e0;     
+}
+
+/* ================== QTableWidget 开始 ================== */
+
+QTableWidget {
+    background-color: #ffffff;
+    border: 1px solid #c8cdd6;
+    border-radius: 5px;
+    gridline-color: #eef1f5;
+    selection-background-color: #eef1f5;
+    color: #222222;
+}
+
+QTableWidget::item {
+    padding: 2px 2px;
+}
+
+/* 表头样式（补充了右侧分割线） */
+QHeaderView::section {
+    background-color: #ffffff;
+    border: none;
+    border-bottom: 1px solid #c8cdd6;
+    border-right: 1px solid #eef1f5; /* ⚠️ 新增：给表头加上右侧分割线，区分不同列 */
+    padding: 2px 2px;
+    color: #222222;
+}
+
+/* ================== QGroupBox 开始 ================== */
+
+QGroupBox {
+    border: 1px solid #E0E0E0; 
+    border-radius: 5px; 
+    background-color: #FCFCFC; 
+    margin-top: 10px; /* ⚠️ 新增：给标题留出一点顶部空间 */
+	font-weight: bold;
+}
+
+/* 分组框标题（补充了左右内边距） */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    color: #333333;
+    background-color: #FCFCFC; 
+    padding: 0 5px; /* ⚠️ 新增：左右留出 5px 空间，让遮盖边框的效果更自然，文字不贴边 */
+}
+
+/* ================== QLabel 开始 ================== */
+
+QLabel {
+    color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+    font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+    background-color: #FCFCFC; /* 与分组框背景色一致 */
+    border: 1px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+    border-radius: 5px;       /* 相同的圆角 */
+    padding: 6px 10px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */
+}
+
+/* ================== QComboBox 开始 ================== */
+
+/* 默认状态 */
+QComboBox {
+    background-color: #ffffff;
+    border: 1px solid #D0D0D0;     
+    border-radius: 4px;            
+    padding: 2px 2px;              
+    color: #222222;                
+    min-height: 20px;
+	font-weight: bold;             /* 加上这一行，文字就加粗了 */              
+}
+
+/* 获得焦点时 */
+QComboBox:focus {
+    border: 1px solid #007AFF;     
+    background-color: #E8F4FF;     
+}
+
+/* 禁用状态 */
+QComboBox:disabled {
+    background-color: #eef1f5;     
+    color: #9aa0a6;                
+    border: 1px solid #d3d8e0;     
+}
+
+/* 右侧下拉按钮区域 */
+QComboBox::drop-down {
+    width: 16px;
+    border-left: 1px solid #D0D0D0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+/* 使用自定义图片作为下拉箭头 */
+QComboBox::down-arrow {
+    image: url(:/MachineCore/Icon/fa_0xf107.png); /* 替换为你的资源路径 */
+    width: 10px;                        /* 建议设置合适的宽高 */
+    height: 10px;
+}
+
+</string>
+  </property>
+  <widget class="QLabel" name="label_Info">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>360</y>
+     <width>421</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>581</width>
+     <height>351</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>561</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QComboBox" name="comboBox_Step">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>25</y>
+       <width>71</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <item>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>10</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>100</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_Step">
+     <property name="geometry">
+      <rect>
+       <x>425</x>
+       <y>25</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+background-color: #FCFCFC; /* 与分组框背景色一致 */
+border: 0px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+border-radius: 5px;       /* 相同的圆角 */
+padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */</string>
+     </property>
+     <property name="text">
+      <string>Step</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_Step_5">
+     <property name="geometry">
+      <rect>
+       <x>425</x>
+       <y>60</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+background-color: #FCFCFC; /* 与分组框背景色一致 */
+border: 0px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+border-radius: 5px;       /* 相同的圆角 */
+padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */</string>
+     </property>
+     <property name="text">
+      <string>Angle</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_Step_2">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>60</y>
+       <width>71</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <item>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>5</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>30</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>45</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>90</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QComboBox" name="comboBox_Axis">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>130</y>
+       <width>71</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <item>
+      <property name="text">
+       <string>XY</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ZR</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_Axis">
+     <property name="geometry">
+      <rect>
+       <x>425</x>
+       <y>130</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+background-color: #FCFCFC; /* 与分组框背景色一致 */
+border: 0px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+border-radius: 5px;       /* 相同的圆角 */
+padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */</string>
+     </property>
+     <property name="text">
+      <string>Axis</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_WorldOrigin">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>290</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Point</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_PcbOrigin">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>290</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>PCB</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_FeederOrigin">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>290</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Feeder</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_Speed">
+     <property name="geometry">
+      <rect>
+       <x>425</x>
+       <y>95</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #333333;           /* 与 QGroupBox::title 保持一致的深灰色 */
+font-weight: bold;        /* 保持相同的加粗效果（如果是普通文本可去掉这行） */
+background-color: #FCFCFC; /* 与分组框背景色一致 */
+border: 0px solid #E0E0E0; /* 相同的边框颜色和粗细 */
+border-radius: 5px;       /* 相同的圆角 */
+padding: 0px 0px;        /* 适当的内边距，让文字不贴边，视觉上更舒适 */</string>
+     </property>
+     <property name="text">
+      <string>Speed</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>401</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QLabel" name="label_Video">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>15</y>
+        <width>391</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Video</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QComboBox" name="comboBox_Speed">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>95</y>
+       <width>71</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <item>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>10</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>100</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>180</y>
+       <width>131</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>Move</string>
+     </property>
+     <widget class="QPushButton" name="pushButton_Right">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>65</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../MachineCore.qrc">
+        <normaloff>:/MachineCore/Icon/fa_0xf0da.png</normaloff>:/MachineCore/Icon/fa_0xf0da.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Up">
+      <property name="geometry">
+       <rect>
+        <x>55</x>
+        <y>35</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../MachineCore.qrc">
+        <normaloff>:/MachineCore/Icon/fa_0xf0d8.png</normaloff>:/MachineCore/Icon/fa_0xf0d8.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Left">
+      <property name="geometry">
+       <rect>
+        <x>25</x>
+        <y>65</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../MachineCore.qrc">
+        <normaloff>:/MachineCore/Icon/fa_0xf0d9.png</normaloff>:/MachineCore/Icon/fa_0xf0d9.png</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Down">
+      <property name="geometry">
+       <rect>
+        <x>55</x>
+        <y>95</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../MachineCore.qrc">
+        <normaloff>:/MachineCore/Icon/fa_0xf0dd.png</normaloff>:/MachineCore/Icon/fa_0xf0dd.png</iconset>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="label_Info_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>290</y>
+       <width>131</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>坐标原点标定：</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButton_Cancel">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>360</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_OK">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>360</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../MachineCore.qrc"/>
+ </resources>
+ <connections/>
+</ui>

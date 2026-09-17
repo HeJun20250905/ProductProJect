@@ -2,9 +2,10 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_MachineCore.h"
 
-#include <QPointer>
-#include <QThread>
-#include <QMutex>
+#include <QPointer>                 // 智能指针
+#include <QThread>                  // 线程
+#include <QMutex>                   // 互斥锁
+#include <QTimer>                   // 定时器
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MachineCoreClass; };
@@ -33,11 +34,10 @@ enum class MachineCore_State
 };
 
 class WorkThread;
+class VisionThread;
 
 namespace cv 
-{
-    class Mat;
-}
+{ class Mat; }
 
 class MachineCore : public QMainWindow
 {
@@ -54,11 +54,29 @@ private:
     Ui::MachineCoreClass *ui;
 
     QPointer<QThread> m_workerThread;               // 工作线程
-    WorkThread* m_worker = nullptr;
+    WorkThread* m_worker = nullptr;                 // 工作线程对象
 
-    cv::Mat* m_visionFrame = nullptr;
-    QMutex m_visionMutex;
-    bool m_visionThreadSign = false;
+    // cv::Mat* m_visionFrame = nullptr;               // 视觉算法源图
+    // bool m_visionThreadSign = false;                // 视觉算法线程启动信号
+
+    QPointer<QThread> m_visionThread;               // 视觉算法线程
+    VisionThread* m_vision = nullptr;               // 视觉线程对象
+
+    // QMutex m_frameMutex;                            // 视觉安全锁                          
+    // QTimer* m_frameTimer = nullptr;                 // 视频帧定时器
+    // bool m_newFrame = false;                        // 新视频帧信号
+
+    // 这个是用于VisionCore模块的静态回调函数，对接DLL的纯C接口
+    static void ImageCallbackFunc(unsigned char* pData,
+        int nLen,
+        int nWidth,
+        int nHeight,
+        int nPixelType,
+        void* pUser
+    );
+
+    // 当前显示是否是UI界面
+    bool m_isUi = true;
 
 private:
     int OnInitLoggerH();                            // 初始化日志系统
@@ -69,7 +87,7 @@ private:
     int OnInitMotion();                             // 运控模组初始化
     int OnInitLibrary();                            // 元件库初始化
     int OnInitParameter();                          // 参数表初始化
-    int OnInitDialogStyle();                        // 样式表初始化
+    int OnInitTableStyle();                         // 表格初始化
 
 protected:
     void closeEvent(QCloseEvent* event) override;
@@ -78,6 +96,7 @@ private slots:
     void on_toolButton_Start_clicked();             // 启动
     void on_toolButton_Quit_clicked();              // 退出
 
+    void on_pushButton_VisionDetect_clicked();      // 视觉算法
     void on_pushButton_Result_clicked();            // 结果
 
     void WorkThreadWorkFinished();                  // 工作线程工作完成
@@ -91,11 +110,15 @@ private slots:
     void on_pushButton_Motion_clicked();            // 运控
     void on_pushButton_Data_clicked();              // 数据
 
-    void ShowImageFromVisiondialogToMachineCore(const cv::Mat& image);
-    void VisionMathThreadStartSign();
+    // void ShowImageFromVisiondialogToMachineCore(const cv::Mat& image);
+    // void VisionMathThreadStartSign();
     void VisionMathThreadStartWork();
 
+    // void OnFrameTimer();                            // 帧定时器
+
 signals:
-    void VisionThreadStartWork();
+    // void VisionThreadStartWork();
+    void sigStartVision(const cv::Mat& image);
+    void sigToVisionDialog(const cv::Mat& image);
 };
 

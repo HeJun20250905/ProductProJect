@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include <atomic> // 必须包含这个头文件
+#include <atomic>       // 必须包含这个头文件
 
 struct PickPlace;
 
@@ -38,7 +38,7 @@ public:
 private:
     std::atomic<bool> m_stopFlag{ false };        // 紧急停止标志
 
-    QTimer* m_stopTimer = nullptr;
+    QTimer* m_stepTimer = nullptr;
 
     float m_targetPosX = 0.0;                    // X目标位置
     float m_speedX = 500.0;                      // X速度

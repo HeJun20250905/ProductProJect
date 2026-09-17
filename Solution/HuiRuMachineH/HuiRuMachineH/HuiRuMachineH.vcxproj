@@ -116,15 +116,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ChildDialog\DataDialog.cpp" />
-    <ClCompile Include="ChildDialog\FileDialog.cpp" />
-    <ClCompile Include="ChildDialog\LibraryDialog.cpp" />
-    <ClCompile Include="ChildDialog\MotionDialog.cpp" />
-    <ClCompile Include="ChildDialog\ParaDialog.cpp" />
-    <ClCompile Include="ChildDialog\PCBDialog.cpp" />
-    <ClCompile Include="ChildDialog\ToolDialog.cpp" />
-    <ClCompile Include="ChildDialog\VisionDialog.cpp" />
     <ClCompile Include="DataBase.cpp" />
+    <ClCompile Include="dialog\DataDialog.cpp" />
+    <ClCompile Include="dialog\FileDialog.cpp" />
+    <ClCompile Include="dialog\LibraryDialog.cpp" />
+    <ClCompile Include="dialog\MotionDialog.cpp" />
+    <ClCompile Include="dialog\ParaDialog.cpp" />
+    <ClCompile Include="dialog\PCBDialog.cpp" />
+    <ClCompile Include="dialog\ToolDialog.cpp" />
+    <ClCompile Include="dialog\VisionChildDialog.cpp" />
+    <ClCompile Include="dialog\VisionDialog.cpp" />
     <ClCompile Include="FeederPos.cpp" />
     <ClCompile Include="HuiRuLoggerH.cpp" />
     <ClCompile Include="Library.cpp" />
@@ -132,16 +133,19 @@
     <ClCompile Include="SpatialCube.cpp" />
     <ClCompile Include="TaskList.cpp" />
     <ClCompile Include="TestDialog.cpp" />
+    <ClCompile Include="VisionFrame.cpp" />
+    <ClCompile Include="VisionThread.cpp" />
     <ClCompile Include="WorkThread.cpp" />
     <QtRcc Include="MachineCore.qrc" />
-    <QtUic Include="ChildDialog\DataDialog.ui" />
-    <QtUic Include="ChildDialog\FileDialog.ui" />
-    <QtUic Include="ChildDialog\LibraryDialog.ui" />
-    <QtUic Include="ChildDialog\MotionDialog.ui" />
-    <QtUic Include="ChildDialog\ParaDialog.ui" />
-    <QtUic Include="ChildDialog\PCBDialog.ui" />
-    <QtUic Include="ChildDialog\ToolDialog.ui" />
-    <QtUic Include="ChildDialog\VisionDialog.ui" />
+    <QtUic Include="dialog\DataDialog.ui" />
+    <QtUic Include="dialog\FileDialog.ui" />
+    <QtUic Include="dialog\LibraryDialog.ui" />
+    <QtUic Include="dialog\MotionDialog.ui" />
+    <QtUic Include="dialog\ParaDialog.ui" />
+    <QtUic Include="dialog\PCBDialog.ui" />
+    <QtUic Include="dialog\ToolDialog.ui" />
+    <QtUic Include="dialog\VisionChildDialog.ui" />
+    <QtUic Include="dialog\VisionDialog.ui" />
     <QtUic Include="MachineCore.ui" />
     <QtMoc Include="MachineCore.h" />
     <ClCompile Include="MachineCore.cpp" />
@@ -152,14 +156,17 @@
     <QtMoc Include="WorkThread.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="ChildDialog\DataDialog.h" />
-    <QtMoc Include="ChildDialog\FileDialog.h" />
-    <QtMoc Include="ChildDialog\LibraryDialog.h" />
-    <QtMoc Include="ChildDialog\MotionDialog.h" />
-    <QtMoc Include="ChildDialog\ParaDialog.h" />
-    <QtMoc Include="ChildDialog\PCBDialog.h" />
-    <QtMoc Include="ChildDialog\ToolDialog.h" />
-    <QtMoc Include="ChildDialog\VisionDialog.h" />
+    <QtMoc Include="dialog\DataDialog.h" />
+    <QtMoc Include="dialog\FileDialog.h" />
+    <QtMoc Include="dialog\LibraryDialog.h" />
+    <QtMoc Include="dialog\MotionDialog.h" />
+    <QtMoc Include="dialog\ParaDialog.h" />
+    <QtMoc Include="dialog\PCBDialog.h" />
+    <QtMoc Include="dialog\ToolDialog.h" />
+    <QtMoc Include="dialog\VisionChildDialog.h" />
+    <QtMoc Include="dialog\VisionDialog.h" />
+    <ClInclude Include="VisionFrame.h" />
+    <QtMoc Include="VisionThread.h" />
     <ClInclude Include="FeederPos.h" />
     <ClInclude Include="SpatialCube.h" />
     <ClInclude Include="TaskList.h" />

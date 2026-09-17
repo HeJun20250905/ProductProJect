@@ -207,13 +207,13 @@ unsigned int __stdcall GrabThreadProc(void* pUser)
             // qDebug() << "[VisionCore] GrabThreadProc 分辨率:" << pThis->m_frameInfo.nWidth << "x" << pThis->m_frameInfo.nHeight;
 
             // SDK 直接渲染到窗口，不拷贝、不转换
-            MV_CC_IMAGE stImage = { 0 };
-            stImage.nWidth = stFrame.stFrameInfo.nExtendWidth;
-            stImage.nHeight = stFrame.stFrameInfo.nExtendHeight;
-            stImage.enPixelType = stFrame.stFrameInfo.enPixelType;
-            stImage.nImageLen = stFrame.stFrameInfo.nFrameLenEx;
-            stImage.pImageBuf = stFrame.pBufAddr;
-            MV_CC_DisplayOneFrameEx2(pThis->m_handle, pThis->m_display, &stImage, 0);
+            //MV_CC_IMAGE stImage = { 0 };
+            //stImage.nWidth = stFrame.stFrameInfo.nExtendWidth;
+            //stImage.nHeight = stFrame.stFrameInfo.nExtendHeight;
+            //stImage.enPixelType = stFrame.stFrameInfo.enPixelType;
+            //stImage.nImageLen = stFrame.stFrameInfo.nFrameLenEx;
+            //stImage.pImageBuf = stFrame.pBufAddr;
+            //MV_CC_DisplayOneFrameEx2(pThis->m_handle, pThis->m_display, &stImage, 0);
 
             MV_CC_FreeImageBuffer(pThis->m_handle, &stFrame);
         }

@@ -25,8 +25,8 @@
 WorkThread::WorkThread(QObject* parent)
 	: QObject(parent)
 {
-    m_stopTimer = new QTimer(this);
-    connect(m_stopTimer, &QTimer::timeout, this, &WorkThread::TimerSlot);
+    m_stepTimer = new QTimer(this);
+    connect(m_stepTimer, &QTimer::timeout, this, &WorkThread::TimerSlot);
 }
 
 WorkThread::~WorkThread()
@@ -46,11 +46,11 @@ void WorkThread::doWork()
     Motion_InitAxis(AXIS_Z);
     Motion_InitAxis(AXIS_R);
     
-    // X轴使能，1使能, 0关闭使能
+    // 轴使能，1使能, 0关闭使能（-1使能所有轴）
     Motion_Enable(-1, 1);
     qDebug() << "[WorkThread] doWork: 使能全部XYZR轴";
 
-    m_stopTimer->start(50);
+    m_stepTimer->start(50);
 }
 
 int WorkThread::IsAtPosition(int axis, float targetPos, float* currentPos)
@@ -96,8 +96,9 @@ void WorkThread::TimerSlot()
         Motion_Stop(AXIS_R);
         Motion_Enable(AXIS_R, 0);
 
-        m_stopTimer->stop();
+        m_stepTimer->stop();
 
+        qDebug() << "[WorkThread] 紧急停止";
         emit workFinished();
 
         return;
@@ -106,7 +107,7 @@ void WorkThread::TimerSlot()
     // 如果手里没活（IDLE），去队列里取一个
     if (m_step == Step::idle) 
     {
-        // 【关键】如果指针为空，先在堆上分配内存
+        // 如果指针为空，先在堆上分配内存
         if (m_currentTask == nullptr) 
         {
             m_currentTask = new PickPlace();
@@ -144,7 +145,7 @@ void WorkThread::TimerSlot()
         else 
         {
             // 队列空了
-            m_stopTimer->stop();
+            m_stepTimer->stop();
             emit workFinished();
             qDebug() << "[WorkThread] 任务队列已空，结束工作";
             return;
