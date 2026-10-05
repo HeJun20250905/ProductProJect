@@ -311,10 +311,10 @@ int MachineCore::OnInitVision()
 
 int MachineCore::OnInitMotion()
 {
-    qDebug() << "[MachineCore] InitMotion: Motion_InitDevice";
+    qDebug() << "[MachineCore] InitMotion: OnInitMotion";
 
-    // 初始化设备 (连接仿真器)
-    int result = Motion_InitDevice("127.0.0.1");
+    // 初始化设备 (连接运控卡)
+    int result = Motion_InitDevice("192.168.0.11");
     if (result != MOTION_RESULT_OK)
     {
         qDebug() << "[MachineCore] InitMotion: Motion_InitDevice failed";
@@ -322,7 +322,16 @@ int MachineCore::OnInitMotion()
         return MACHINECORE_RESULT_ERROR_MOTION;
     }
 
-    qDebug() << "[MachineCore] InitMotion: Motion_InitDevice: success";
+    // 初始化轴参数（ATYPE, UNITS, SPEED等）
+    result = Motion_InitAxis(-1, 400.0, 10.0, 100.0, 100.0);
+    if (result != MOTION_RESULT_OK)
+    {
+        qDebug() << "[MachineCore] InitMotion: Motion_InitAxis failed";
+
+        return MACHINECORE_RESULT_ERROR_MOTION;
+    }
+
+    qDebug() << "[MachineCore] InitMotion: OnInitMotion: success";
 
     return MACHINECORE_RESULT_SUCCESS;
 }

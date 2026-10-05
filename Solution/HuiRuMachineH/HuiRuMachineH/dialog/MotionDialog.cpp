@@ -59,18 +59,31 @@ void MotionDialog::on_pushButton_Cancel_clicked()
     this->close();
 }
 
-bool MotionDialog::AxisMove()
+bool MotionDialog::MotionDialogAxisMove()
 {
-    // 初始化轴参数（ATYPE, UNITS, SPEED等）
-    Motion_InitAxis(m_axisIndex);
+    //// 初始化轴参数（ATYPE, UNITS, SPEED等）
+    //Motion_InitAxis(-1, 400.0, 10.0, 100.0, 100.0);
     
     // 轴使能，1使能, 0关闭使能
-    Motion_Enable(m_axisIndex, 1);
+    Motion_Enable(0, 1);
+    Motion_Enable(1, 1);
+    Motion_Enable(2, 1);
     qDebug() << "[MotionDialog] 使能轴";
     
-    // 轴绝对运动
-    qDebug() << "[MotionDialog] 移动轴" << m_targetPos << "，速度" << m_speed;
-    Motion_MoveAbs(m_axisIndex, m_targetPos, m_speed);
+    // 组装轴号和目标位置数组
+    int   axes[3] = {0, 1, 2};
+    float targets[3] = { m_targetPosX, m_targetPosY, m_targetPosZ };
+
+    // 轴绝对运动（单轴也用数组接口，方便统一）
+    //qDebug() << "[MotionDialog] 移动轴" << m_axisIndex << "到位置" << m_targetPos << "，速度" << m_speed;
+
+    int ret = Motion_MoveRelMulti(3, axes, targets);
+    if (ret != 0)
+    {
+        qDebug() << "[MotionDialog] 运动失败，错误码:" << ret;
+        ui->label_Info->setText("运动失败");
+        return false;
+    }
     
     ui->label_Info->setText("正在移动...");
     
@@ -115,39 +128,31 @@ void MotionDialog::on_pushButton_OK_clicked()
 
 void MotionDialog::motionDialog_moveTimer_timeout()
 {
-    // 获取当前实际位置
-    Motion_GetDpos(m_axisIndex, &m_currentPos);
+    // 读取三个轴当前位置
+    Motion_GetDpos(AXIS_X, &m_currentPosX);
+    Motion_GetDpos(AXIS_Y, &m_currentPosY);
+    Motion_GetDpos(AXIS_Z, &m_currentPosZ);
 
-    // 记录轴是否已经离开了初始位置（防止还没动就判定到位）
-    if (std::abs(m_currentPos - 0.0) > 0.01)
-    {
-        qDebug() << "[MotionDialog] 检测到轴已起步，当前位置:" << m_currentPos;
-    }
+    // 三个轴是否全部到位
+    bool xDone = std::abs(m_currentPosX - m_targetPosX) <= 10.0f;
+    bool yDone = std::abs(m_currentPosY - m_targetPosY) <= 10.0f;
+    bool zDone = std::abs(m_currentPosZ - m_targetPosZ) <= 10.0f;
 
-    // 如果 目标位置与实际位置的差值小于允许误差，说明运行到位。
-    if (std::abs(m_currentPos - m_targetPos) <= 0.05)
+    if (xDone && yDone && zDone)
     {
-        qDebug() << "[MotionDialog] 轴移动确认到位！最终位置:" << m_currentPos;
+        qDebug() << "[MotionDialog] 三轴移动确认到位！最终位置:" << m_currentPosX << m_currentPosY << m_currentPosZ;
 
         ui->label_Info->setText("确认移动到位");
         m_motionDialog_moveTimer->stop();
     }
     else
     {
-        float x, y, z;
-
-        // 读取当前电机位置
-        Motion_GetDpos(AXIS_X, &x);
-        Motion_GetDpos(AXIS_Y, &y);
-        Motion_GetDpos(AXIS_Z, &z);
-
-        // 格式化字符串
         QString newText = QString("正在运行 ： X = %1, Y = %2, Z = %3")
-            .arg(x, 0, 'f', 2)
-            .arg(y, 0, 'f', 2)
-            .arg(z, 0, 'f', 2);
+            .arg(m_currentPosX, 0, 'f', 2)
+            .arg(m_currentPosY, 0, 'f', 2)
+            .arg(m_currentPosZ, 0, 'f', 2);
 
-        // 界面显示标定结果（保留2位小数）
+        // 显示结果
         if (ui->label_Info->text() != newText)
         {
             ui->label_Info->setText(newText);
@@ -189,118 +194,147 @@ void MotionDialog::motionDialog_visionTimer_timeout()
 
 void MotionDialog::on_pushButton_Up_clicked()
 {
-    // 获取轴索引
-    int index = ui->comboBox_Axis->currentIndex();
-    switch (index)
-    {
-    case 0:
-        m_axisIndex = AXIS_Y;
-        break;
-    case 1:
-        m_axisIndex = AXIS_Z;
-        break;
-    default:
-        qDebug() << "[MotionDialog] 轴索引错误！";
-        break;
-    }
+    //// 获取轴索引
+    //int index = ui->comboBox_Axis->currentIndex();
+    //switch (index)
+    //{
+    //case 0:
+    //    m_axisIndex = AXIS_Y;
+    //    break;
+    //case 1:
+    //    m_axisIndex = AXIS_Z;
+    //    break;
+    //default:
+    //    qDebug() << "[MotionDialog] 轴索引错误！";
+    //    break;
+    //}
 
-    // 设定目标速度
-    m_speed = ui->comboBox_Speed->currentText().toDouble();
+    //// 设定目标速度
+    //m_speed = ui->comboBox_Speed->currentText().toDouble();
 
-    // 获取当前实际位置
-    Motion_GetDpos(m_axisIndex, &m_currentPos);
+    //// 获取当前实际位置
+    //Motion_GetDpos(m_axisIndex, &m_currentPos);
 
-    // 设定目标位置
-    m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
+    //// 设定目标位置
+    //m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
 
-    this->AxisMove();
+    //this->AxisMove();
 }
 
 void MotionDialog::on_pushButton_Down_clicked()
 {
-    // 获取轴索引
-    int index = ui->comboBox_Axis->currentIndex();
-    switch (index)
-    {
-    case 0:
-        m_axisIndex = AXIS_Y;
-        break;
-    case 1:
-        m_axisIndex = AXIS_Z;
-        break;
-    default:
-        qDebug() << "[MotionDialog] 轴索引错误！";
-        break;
-    }
+    //// 获取轴索引
+    //int index = ui->comboBox_Axis->currentIndex();
+    //switch (index)
+    //{
+    //case 0:
+    //    m_axisIndex = AXIS_Y;
+    //    break;
+    //case 1:
+    //    m_axisIndex = AXIS_Z;
+    //    break;
+    //default:
+    //    qDebug() << "[MotionDialog] 轴索引错误！";
+    //    break;
+    //}
 
-    // 设定目标速度
-    m_speed = ui->comboBox_Speed->currentText().toDouble();
+    //// 设定目标速度
+    //m_speed = ui->comboBox_Speed->currentText().toDouble();
 
-    // 获取当前实际位置
-    Motion_GetDpos(m_axisIndex, &m_currentPos);
+    //// 获取当前实际位置
+    //Motion_GetDpos(m_axisIndex, &m_currentPos);
 
-    // 设定目标位置
-    m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
+    //// 设定目标位置
+    //m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
 
-    this->AxisMove();
+    //this->AxisMove();
 }
 
 void MotionDialog::on_pushButton_Left_clicked()
 {
-    // 获取轴索引
-    int index = ui->comboBox_Axis->currentIndex();
-    switch (index)
-    {
-    case 0:
-        m_axisIndex = AXIS_X;
-        break;
-    case 1:
-        m_axisIndex = AXIS_R;
-        break;
-    default:
-        qDebug() << "[MotionDialog] 轴索引错误！";
-        break;
-    }
+    //// 获取轴索引
+    //int index = ui->comboBox_Axis->currentIndex();
+    //switch (index)
+    //{
+    //case 0:
+    //    m_axisIndex = AXIS_X;
+    //    break;
+    //case 1:
+    //    m_axisIndex = AXIS_R;
+    //    break;
+    //default:
+    //    qDebug() << "[MotionDialog] 轴索引错误！";
+    //    break;
+    //}
 
-    // 设定目标速度
-    m_speed = ui->comboBox_Speed->currentText().toDouble();
+    //// 设定目标速度
+    //m_speed = ui->comboBox_Speed->currentText().toDouble();
 
-    // 获取当前实际位置
-    Motion_GetDpos(m_axisIndex, &m_currentPos);
+    //// 获取当前实际位置
+    //Motion_GetDpos(m_axisIndex, &m_currentPos);
 
-    // 设定目标位置
-    m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
+    //// 设定目标位置
+    //m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
 
-    this->AxisMove();
+    this->MotionDialogAxisMove();
 }
 
 void MotionDialog::on_pushButton_Right_clicked()
 {
-    // 获取轴索引
-    int index = ui->comboBox_Axis->currentIndex();
-    switch (index)
-    {
-    case 0:
-        m_axisIndex = AXIS_X;
-        break;
-    case 1:
-        m_axisIndex = AXIS_R;
-        break;
-    default:
-        qDebug() << "[MotionDialog] 轴索引错误！";
-        break;
-    }
+    //// 获取轴索引
+    //int index = ui->comboBox_Axis->currentIndex();
+    //switch (index)
+    //{
+    //case 0:
+    //    m_axisIndex = AXIS_X;
+    //    break;
+    //case 1:
+    //    m_axisIndex = AXIS_R;
+    //    break;
+    //default:
+    //    qDebug() << "[MotionDialog] 轴索引错误！";
+    //    break;
+    //}
 
-    // 设定目标速度
-    m_speed = ui->comboBox_Speed->currentText().toDouble();
+    //// 设定目标速度
+    //m_speed = ui->comboBox_Speed->currentText().toDouble();
 
-    // 获取当前实际位置
-    Motion_GetDpos(m_axisIndex, &m_currentPos);
+    //// 获取当前实际位置
+    //Motion_GetDpos(m_axisIndex, &m_currentPos);
 
-    // 设定目标位置
-    m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
+    //// 设定目标位置
+    //m_targetPos = m_currentPos + ui->comboBox_Step->currentText().toDouble();
 
-    this->AxisMove();
+    //this->AxisMove();
+}
+
+void MotionDialog::on_pushButton_Move_clicked()
+{
+    // 读取三个 lineEdit 的文本并转为 float
+    m_targetPosX = ui->lineEdit_X->text().toFloat();
+    m_targetPosY = ui->lineEdit_Y->text().toFloat();
+    m_targetPosZ = ui->lineEdit_Z->text().toFloat();
+
+    qDebug() << "[MotionDialog] 目标位置: X=" << m_targetPosX
+        << " Y=" << m_targetPosY
+        << " Z=" << m_targetPosZ;
+
+    this->MotionDialogAxisMove();
+}
+
+void MotionDialog::on_pushButton_HomeX_clicked()
+{
+    Motion_Home(0, 10, 2, 100, 100);
+}
+
+void MotionDialog::on_pushButton_HomeY_clicked()
+{
+    Motion_Home(1, 10, 2, 100, 100);
+}
+
+void MotionDialog::on_pushButton_HomeZ_clicked()
+{
+    Motion_Home(2, 10, 2, 100, 100);
 }
 
 void MotionDialog::on_pushButton_WorldOrigin_clicked()

@@ -40,14 +40,10 @@ WorkThread::~WorkThread()
 
 void WorkThread::doWork()
 {
-    // 初始化轴参数（ATYPE, UNITS, SPEED等）
-    Motion_InitAxis(AXIS_X);
-    Motion_InitAxis(AXIS_Y);
-    Motion_InitAxis(AXIS_Z);
-    Motion_InitAxis(AXIS_R);
-    
     // 轴使能，1使能, 0关闭使能（-1使能所有轴）
-    Motion_Enable(-1, 1);
+    Motion_Enable(0, 1);
+    Motion_Enable(1, 1);
+    Motion_Enable(2, 1);
     qDebug() << "[WorkThread] doWork: 使能全部XYZR轴";
 
     m_stepTimer->start(50);
@@ -152,157 +148,157 @@ void WorkThread::TimerSlot()
         }
     }
 
-    // 根据当前步骤，执行对应的动作
-    switch (m_step)
-    {
-    case Step::move_xy_feeder:
-        // 发起移动指令
-        Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_feederZeroOffsetX, m_feederZeroOffsetY, 500.0);
-        qDebug() << "[WorkThread] FEEDER XY 指令发送";
-        m_step = Step::wait_xy_feeder;
-        // 标志位
-        m_hasStarted = false;
-        break;
+    //// 根据当前步骤，执行对应的动作
+    //switch (m_step)
+    //{
+    //case Step::move_xy_feeder:
+    //    // 发起移动指令
+    //    Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_feederZeroOffsetX, m_feederZeroOffsetY, 500.0);
+    //    qDebug() << "[WorkThread] FEEDER XY 指令发送";
+    //    m_step = Step::wait_xy_feeder;
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
 
-    case Step::wait_xy_feeder:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        // 检查XY轴是否到位
-        if (IsAtPosition(AXIS_X, m_feederZeroOffsetX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_feederZeroOffsetY, &m_currentPosY) == 0)
-        {
-            qDebug() << "[WorkThread] FEEDER X Y 到位";
-            m_step = Step::move_z_down_feeder;
-        }
-        break;
+    //case Step::wait_xy_feeder:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    // 检查XY轴是否到位
+    //    if (IsAtPosition(AXIS_X, m_feederZeroOffsetX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_feederZeroOffsetY, &m_currentPosY) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] FEEDER X Y 到位";
+    //        m_step = Step::move_z_down_feeder;
+    //    }
+    //    break;
 
-    case Step::move_z_down_feeder:
-        // Z轴下降到取料高度
-        Motion_MoveAbs(AXIS_Z, m_feederZeroOffsetZ, 500.0);
-        qDebug() << "[WorkThread] FEEDER Z 下降指令发送";
-        m_step = Step::wait_z_down_feeder;
-        // 标志位
-        m_hasStarted = false;
-        break;
+    //case Step::move_z_down_feeder:
+    //    // Z轴下降到取料高度
+    //    Motion_MoveAbs(AXIS_Z, m_feederZeroOffsetZ, 500.0);
+    //    qDebug() << "[WorkThread] FEEDER Z 下降指令发送";
+    //    m_step = Step::wait_z_down_feeder;
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
 
-    case Step::wait_z_down_feeder:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        if (IsAtPosition(AXIS_Z, m_feederZeroOffsetZ, &m_currentPosZ) == 0)
-        {
-            qDebug() << "[WorkThread] FEEDER Z 轴下降到位";
+    //case Step::wait_z_down_feeder:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    if (IsAtPosition(AXIS_Z, m_feederZeroOffsetZ, &m_currentPosZ) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] FEEDER Z 轴下降到位";
 
-            // 这里可以加一点延时或者IO操作（如打开气阀）
-            m_step = Step::move_z_up_feeder;
-        }
-        break;
+    //        // 这里可以加一点延时或者IO操作（如打开气阀）
+    //        m_step = Step::move_z_up_feeder;
+    //    }
+    //    break;
 
-    case Step::move_z_up_feeder:
-        // Z轴回到安全高度
-        Motion_MoveAbs(AXIS_Z, 0.0, 500.0);
-        qDebug() << "[WorkThread] FEEDER Z 上升指令发送";
-        m_step = Step::wait_z_up_feeder; 
-        // 标志位
-        m_hasStarted = false;
-        break;
-    
-    case Step::wait_z_up_feeder:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
-        {
-            qDebug() << "[WorkThread] FEEDER Z 轴上升到位";
-            m_step = Step::move_xy_pcb;
-        }
-        break;
+    //case Step::move_z_up_feeder:
+    //    // Z轴回到安全高度
+    //    Motion_MoveAbs(AXIS_Z, 0.0, 500.0);
+    //    qDebug() << "[WorkThread] FEEDER Z 上升指令发送";
+    //    m_step = Step::wait_z_up_feeder; 
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
+    //
+    //case Step::wait_z_up_feeder:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] FEEDER Z 轴上升到位";
+    //        m_step = Step::move_xy_pcb;
+    //    }
+    //    break;
 
-    case Step::move_xy_pcb:
-        // 发起移动指令
-        Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_targetPosX, m_targetPosY, 500.0);
-        qDebug() << "[WorkThread] PCB X Y 指令发送";
-        m_step = Step::wait_xy_pcb;
-        // 标志位
-        m_hasStarted = false;
-        break;
+    //case Step::move_xy_pcb:
+    //    // 发起移动指令
+    //    Motion_MoveAbsXY(AXIS_X, AXIS_Y, m_targetPosX, m_targetPosY, 500.0);
+    //    qDebug() << "[WorkThread] PCB X Y 指令发送";
+    //    m_step = Step::wait_xy_pcb;
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
 
-    case Step::wait_xy_pcb:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        if (IsAtPosition(AXIS_X, m_targetPosX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_targetPosY, &m_currentPosY) == 0)
-        {
-            qDebug() << "[WorkThread] PCB X Y 到位";
-            m_step = Step::move_z_down_pcb;
-        }
-        break;
+    //case Step::wait_xy_pcb:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    if (IsAtPosition(AXIS_X, m_targetPosX, &m_currentPosX) == 0 && IsAtPosition(AXIS_Y, m_targetPosY, &m_currentPosY) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] PCB X Y 到位";
+    //        m_step = Step::move_z_down_pcb;
+    //    }
+    //    break;
 
-    case Step::move_z_down_pcb:
-        Motion_MoveAbs(AXIS_Z, -50.0, 500.0);
-        qDebug() << "[WorkThread] PCB Z 下降指令";
-        m_step = Step::wait_z_down_pcb;
-        // 标志位
-        m_hasStarted = false;
-        break;
+    //case Step::move_z_down_pcb:
+    //    Motion_MoveAbs(AXIS_Z, -50.0, 500.0);
+    //    qDebug() << "[WorkThread] PCB Z 下降指令";
+    //    m_step = Step::wait_z_down_pcb;
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
 
-    case Step::wait_z_down_pcb:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        if (IsAtPosition(AXIS_Z, -50.0, &m_currentPosZ) == 0)
-        {
-            qDebug() << "[WorkThread] PCB Z 轴下降到位";
+    //case Step::wait_z_down_pcb:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    if (IsAtPosition(AXIS_Z, -50.0, &m_currentPosZ) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] PCB Z 轴下降到位";
 
-            // 这里可以加一点延时或者IO操作（如打开气阀）
-            m_step = Step::move_z_up_pcb;
-        }
-        break;
+    //        // 这里可以加一点延时或者IO操作（如打开气阀）
+    //        m_step = Step::move_z_up_pcb;
+    //    }
+    //    break;
 
-    case Step::move_z_up_pcb:
-        // Z轴回到安全高度
-        Motion_MoveAbs(AXIS_Z, 0.0, 500.0);
-        qDebug() << "[WorkThread] PCB Z 上升指令发送";
-        m_step = Step::wait_z_up_pcb; 
-        // 标志位
-        m_hasStarted = false;
-        break;
+    //case Step::move_z_up_pcb:
+    //    // Z轴回到安全高度
+    //    Motion_MoveAbs(AXIS_Z, 0.0, 500.0);
+    //    qDebug() << "[WorkThread] PCB Z 上升指令发送";
+    //    m_step = Step::wait_z_up_pcb; 
+    //    // 标志位
+    //    m_hasStarted = false;
+    //    break;
 
-    case Step::wait_z_up_pcb:
-        // 等待一个定时器周期
-        if (!m_hasStarted)
-        {
-            m_hasStarted = true;
-            break; // 直接跳出，50ms硬件反应时间
-        }
-        if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
-        {
-            qDebug() << "[WorkThread] PCB Z轴上升到位，任务完成";
+    //case Step::wait_z_up_pcb:
+    //    // 等待一个定时器周期
+    //    if (!m_hasStarted)
+    //    {
+    //        m_hasStarted = true;
+    //        break; // 直接跳出，50ms硬件反应时间
+    //    }
+    //    if (IsAtPosition(AXIS_Z, 0.0, &m_currentPosZ) == 0)
+    //    {
+    //        qDebug() << "[WorkThread] PCB Z轴上升到位，任务完成";
 
-            qDebug() << "[WorkThread] 单次贴装完成，等待下一任务";
-            // 下次定时器进来时，m_step又是IDLE，会自动去取下一个任务
-            m_step = Step::idle; 
-        }
-        break;
+    //        qDebug() << "[WorkThread] 单次贴装完成，等待下一任务";
+    //        // 下次定时器进来时，m_step又是IDLE，会自动去取下一个任务
+    //        m_step = Step::idle; 
+    //    }
+    //    break;
 
-    default:
-        break;
-    }
+    //default:
+    //    break;
+    //}
 
 }
 

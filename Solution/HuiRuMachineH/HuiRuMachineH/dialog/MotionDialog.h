@@ -22,12 +22,16 @@ private:
     QTimer* m_motionDialog_visionTimer = nullptr;
 
     float m_speed = 0.01f;
-    float m_targetPos = 0.0f;
-    float m_currentPos = 0.0f;
+    float m_targetPosX = 0.0f;
+    float m_targetPosY = 0.0f;
+    float m_targetPosZ = 0.0f;
+    float m_currentPosX = 0.0f;
+    float m_currentPosY = 0.0f;
+    float m_currentPosZ = 0.0f;
 
     int m_axisIndex = -1;
 
-    bool AxisMove();
+    bool MotionDialogAxisMove();
 
     bool SetPixmap(int index);
 
@@ -39,6 +43,12 @@ private slots:
     void on_pushButton_Down_clicked();
     void on_pushButton_Left_clicked();
     void on_pushButton_Right_clicked();
+
+    void on_pushButton_Move_clicked();
+
+    void on_pushButton_HomeX_clicked();
+    void on_pushButton_HomeY_clicked();
+    void on_pushButton_HomeZ_clicked();
 
     void on_pushButton_WorldOrigin_clicked();
     void on_pushButton_PcbOrigin_clicked();

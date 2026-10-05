@@ -26,6 +26,18 @@ private:
 
     QTimer* m_visionDialog_visionTimer = nullptr;
 
+    // 鼠标事件
+    bool eventFilter(QObject* obj, QEvent* event);
+
+    // 鼠标事件处理
+    void handleDoubleClick(const QPoint& pos);
+
+    double m_mmPerPixel = 0.05;      // 毫米/像素
+
+    bool VisionDialogAxisMove(double xPoint, double yPoint);
+
+    double m_notchAngle = 0.00;    // 角点角度
+
 private slots:
     void on_pushButton_Cancel_clicked();
     void on_pushButton_OK_clicked();
@@ -37,6 +49,14 @@ private slots:
     void on_pushButton_Computation_clicked();
 
     void visionDialog_visionTimer_timeout();
+
+    void on_pushButton_Picture_clicked();
+
+    void on_pushButton_CalibBoard_clicked();
+
+    void on_pushButton_CalibScale_clicked();
+
+    void on_pushButton_DetectAngle_clicked();
 
 public slots:
     void displayCalculateResult(const cv::Mat& image);
