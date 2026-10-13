@@ -121,6 +121,7 @@
     <ClCompile Include="dialog\FileDialog.cpp" />
     <ClCompile Include="dialog\LibraryDialog.cpp" />
     <ClCompile Include="dialog\MotionDialog.cpp" />
+    <ClCompile Include="dialog\MotionTestDialog.cpp" />
     <ClCompile Include="dialog\ParaDialog.cpp" />
     <ClCompile Include="dialog\PCBDialog.cpp" />
     <ClCompile Include="dialog\ToolDialog.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="HuiRuLoggerH.cpp" />
     <ClCompile Include="Library.cpp" />
     <ClCompile Include="ResultView.cpp" />
+    <ClCompile Include="ShellModule.cpp" />
     <ClCompile Include="SpatialCube.cpp" />
     <ClCompile Include="TaskList.cpp" />
     <ClCompile Include="TestDialog.cpp" />
@@ -141,6 +143,7 @@
     <QtUic Include="dialog\FileDialog.ui" />
     <QtUic Include="dialog\LibraryDialog.ui" />
     <QtUic Include="dialog\MotionDialog.ui" />
+    <QtUic Include="dialog\MotionTestDialog.ui" />
     <QtUic Include="dialog\ParaDialog.ui" />
     <QtUic Include="dialog\PCBDialog.ui" />
     <QtUic Include="dialog\ToolDialog.ui" />
@@ -165,6 +168,8 @@
     <QtMoc Include="dialog\ToolDialog.h" />
     <QtMoc Include="dialog\VisionChildDialog.h" />
     <QtMoc Include="dialog\VisionDialog.h" />
+    <QtMoc Include="ShellModule.h" />
+    <QtMoc Include="dialog\MotionTestDialog.h" />
     <ClInclude Include="VisionFrame.h" />
     <QtMoc Include="VisionThread.h" />
     <ClInclude Include="FeederPos.h" />

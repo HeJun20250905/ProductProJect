@@ -57,5 +57,7 @@ private slots:
     void motionDialog_moveTimer_timeout();
     void motionDialog_visionTimer_timeout();
 
+    void on_pushButton_Test_clicked();
+
     void on_comboBox_Axis_currentIndexChanged(int index);
 };

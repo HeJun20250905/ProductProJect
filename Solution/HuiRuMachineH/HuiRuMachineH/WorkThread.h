@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <QObject>
 #include <QTimer>
+#include <QElapsedTimer>
+#include <QPointF>
 
 #include <atomic>       // 必须包含这个头文件
 
@@ -8,21 +10,31 @@ struct PickPlace;
 
 enum class Step
 {
-    idle = 0,                      // 空闲：去队列取任务
+    Idle,                   // 空闲状态
+    Stacking,               // 码垛阶段
+    VisionPCB,              // 视觉识别PCB信号
+    FetchShell,             // 取外壳阶段
+    VisionShell,            // 视觉识别外壳阶段
+    PickPCB1,                // 抓手取PCB阶段
+    PickPCB2,                // 抓手取PCB阶段
+    PickPCB3,                // 抓手取PCB阶段
+    PlacePCB1,               // 抓手放PCB阶段
+    PlacePCB2,               // 抓手放PCB阶段
+    PlacePCB3,               // 抓手放PCB阶段
+    LaserConfirm1,           // 激光位移确认阶段
+    LaserConfirm2,           // 激光位移确认阶段
+    LaserConfirm3,           // 激光位移确认阶段
+    LaserConfirm4,           // 激光位移确认阶段
+    ShellPlace,             // 外壳模组放下阶段
+    Executing,              // 动作执行等待状态
+    Pipeline               // 执行全部的动作
+};
 
-    move_xy_feeder,                // 步骤1：XY轴移动
-    wait_xy_feeder,                // 步骤2：等XY停稳
-    move_z_down_feeder,            // 步骤3：Z轴下降取料
-    wait_z_down_feeder,            // 步骤4：等Z下降到位
-    move_z_up_feeder,              // 步骤5：Z轴上升
-    wait_z_up_feeder,              // 步骤6：等Z上升
-
-    move_xy_pcb,                   // 步骤7：XY轴移动
-    wait_xy_pcb,                   // 步骤8：等XY停稳
-    move_z_down_pcb,               // 步骤9：Z轴下降取料
-    wait_z_down_pcb,               // 步骤10：等Z下降到位
-    move_z_up_pcb,                 // 步骤11：Z轴上升
-    wait_z_up_pcb                  // 步骤12：等Z上升
+// 视觉任务种类标记
+enum VisionTask
+{
+    VISION_PCB = 1,         // 识别PCB
+    VISION_SHELL = 2,       // 识别SHELL
 };
 
 class WorkThread : public QObject
@@ -33,47 +45,77 @@ public:
     WorkThread(QObject* parent = nullptr);
     ~WorkThread();
 
-    void doWork();
+    void doWork(Step startStep = Step::Executing);
+
+    bool m_doWorkSingle = false;                  // 执行单步标记
 
 private:
     std::atomic<bool> m_stopFlag{ false };        // 紧急停止标志
 
     QTimer* m_stepTimer = nullptr;
+    QElapsedTimer* m_safeTimer = nullptr;
 
-    float m_targetPosX = 0.0;                    // X目标位置
-    float m_speedX = 500.0;                      // X速度
-    float m_currentPosX = 0.0;                   // X当前位置
+    float m_xAxisPosition_Safe = 0.0;             // 安全高度X轴位置
+    float m_yAxisPosition_Safe = 0.0;             // 安全高度Y轴位置
+    float m_zAxisPosition_Safe = 0.0;             // 安全高度Z轴位置
 
-    float m_targetPosY = 0.0;                    // Y目标位置
-    float m_speedY = 500.0;                      // Y速度
-    float m_currentPosY = 0.0;                   // Y当前位置
+    float m_xAxisPosition_VisionPCB = 0.0;             // 相机视觉X轴位置
+    float m_yAxisPosition_VisionPCB = 0.0;             // 相机视觉Y轴位置
+    float m_zAxisPosition_VisionPCB = 0.0;             // 相机视觉Z轴位置
 
-    float m_targetPosZ = 0.0;                    // Z目标位置
-    float m_speedZ = 500.0;                      // Z速度
-    float m_currentPosZ = 0.0;                   // Z当前位置
+    float m_xAxisPosition_VisionShell = 0.0;             // 相机视觉X轴位置
+    float m_yAxisPosition_VisionShell = 0.0;             // 相机视觉Y轴位置
+    float m_zAxisPosition_VisionShell = 0.0;             // 相机视觉Z轴位置
 
-    float m_targetPosR = 0.0;                    // R目标位置
-    float m_speedR = 500.0;                      // R速度
-    float m_currentPosR = 0.0;                   // R当前位置
+    float m_xAxisPosition_PCB1 = 0.0;             // PCB1位置
+    float m_yAxisPosition_PCB1 = 0.0;             // PCB1位置
+    float m_zAxisPosition_PCB1 = 0.0;             // PCB1位置
 
-    float m_feederZeroOffsetX = 0.0;             // 飞达位置X
-    float m_feederZeroOffsetY = 0.0;             // 飞达位置Y
-    float m_feederZeroOffsetZ = 0.0;             // 飞达位置Z
+    float m_xAxisPosition_PCB2 = 0.0;             // PCB2位置
+    float m_yAxisPosition_PCB2 = 0.0;             // PCB2位置
+    float m_zAxisPosition_PCB2 = 0.0;             // PCB2位置
+
+    float m_xAxisPosition_Shell1 = 0.0;             // Shell位置
+    float m_yAxisPosition_Shell1 = 0.0;             // Shell位置
+    float m_zAxisPosition_Shell1 = 0.0;             // Shell位置
+
+    float m_xAxisPosition_Shell2 = 0.0;             // Shell位置
+    float m_yAxisPosition_Shell2 = 0.0;             // Shell位置
+    float m_zAxisPosition_Shell2 = 0.0;             // Shell位置
+
+    QPointF m_laserPoints[4];                   // 4 个测量点
 
     float m_tolerance = 0.05;                   // 0.05个单位误差
 
     bool m_hasStarted = false;                   // 防止起步瞬间误判
+    
+    Step m_step = Step::Idle;                    // 当前任务步骤
 
-    Step m_step = Step::idle;                    // 当前任务步骤
-    PickPlace* m_currentTask = nullptr;          // 当前任务
+    bool m_moving = false;                      // 是否正在运动
+
+    bool m_emitSiglePCB = false;
+    bool m_emitSingleShell = false;
+
+    int m_fetchShellCount = 0;              // 已检测次数（0~6）
+    int m_fetchShellTick = 0;               // 50ms 累加器（0~19）
 
     // 工具函数：检查轴是否到位
-    int IsAtPosition(int axis, float targetPos, float* currentPos);
+    int IsAtPosition(int axis, float targetPos);
+
+    // 工具函数：回到安全高度
+    void ReturnToSafeHeight();
+
+    // 工具函数：单步判定
+    int SingleStepJudge();
+
+    void on_stop_stepTimer();
 
 private slots:
     void TimerSlot();
 
 signals:
     void workFinished();
+    void visionStart(int taskId);
+    void scanStart();
 };
 

@@ -17,6 +17,7 @@
 #include "Database.h"
 #include "Library.h"
 #include "TaskList.h"
+#include "ShellModule.h"
 
 #include "dialog/FileDialog.h"
 #include "dialog/PCBDialog.h"
@@ -239,6 +240,14 @@ int MachineCore::OnInitMachine()
         // return MACHINECORE_RESULT_ERROR_MOTION;
     }
 
+    result = this->OnInitShellModule();
+    if (result != MACHINECORE_RESULT_SUCCESS)
+    {
+        qDebug("[MachineCore] OnInitMachine: OnInitShellModule failed");
+        // return MACHINECORE_RESULT_ERROR_MOTION;
+    }
+    
+
     result = this->OnInitLibrary();
     if (result != MACHINECORE_RESULT_SUCCESS)
     {
@@ -336,6 +345,41 @@ int MachineCore::OnInitMotion()
     return MACHINECORE_RESULT_SUCCESS;
 }
 
+int MachineCore::OnInitShellModule()
+{
+    // 防止重复创建
+    if (m_shellThread && m_shellThread->isRunning())
+    {
+        qDebug() << "[MachineCore] Shell线程已经在运行";
+        return MACHINECORE_RESULT_SUCCESS;
+    }
+
+    // 创建线程
+    m_shellThread = new QThread();
+    m_shellThread->setObjectName("ShellThread");
+
+    // 把单例搬到这个线程
+    ShellModule::instance().moveToThread(m_shellThread);
+
+    // 线程启动后，在子线程里执行 Init
+    connect(m_shellThread, &QThread::started, this, [this]() 
+    {
+        QMetaObject::invokeMethod(&ShellModule::instance(),
+        [&]() 
+        {
+            ShellModule::instance().ShellModule_Init();
+        }, Qt::QueuedConnection);
+    });
+
+    // 线程退出时清理
+    connect(m_shellThread, &QThread::finished, m_shellThread, &QObject::deleteLater);
+
+    // 启动线程
+    m_shellThread->start();
+    
+    return MACHINECORE_RESULT_SUCCESS;
+}
+
 int MachineCore::OnInitLibrary()
 {
     return MACHINECORE_RESULT_SUCCESS;
@@ -395,8 +439,14 @@ void MachineCore::on_toolButton_Start_clicked()
     // 将工作对象移动到运控线程
     m_worker->moveToThread(m_workerThread);
 
+    Step startStep = Step::Pipeline;
+
     // 当运控线程启动时，自动调用worker的doWork槽函数
-    connect(m_workerThread, &QThread::started, m_worker, &WorkThread::doWork);
+    // connect(m_workerThread, &QThread::started, m_worker, &WorkThread::doWork);
+    connect(m_workerThread, &QThread::started, m_worker, [this, startStep]() 
+    {
+        m_worker->doWork(startStep);
+    });
 
     // 当运控工作对象完成工作时，自动调用WorkThreadWorkFinished槽函数
     connect(m_worker, &WorkThread::workFinished, this, &MachineCore::WorkThreadWorkFinished);

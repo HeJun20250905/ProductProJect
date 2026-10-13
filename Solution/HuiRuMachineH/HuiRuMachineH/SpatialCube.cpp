@@ -39,8 +39,8 @@ int SpatialCube::SpatialCube_CalibrateWorldOrigin(float x, float y)
 
     qDebug() << "[SpatialCube] 开始校准世界坐标原点...";
 
-    m_worldZeroOffsetX = x;
-    m_worldZeroOffsetY = y;
+    //m_worldZeroOffsetX = x;
+    //m_worldZeroOffsetY = y;
 
     return 0;
 }

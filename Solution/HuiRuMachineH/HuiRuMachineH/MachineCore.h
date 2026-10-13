@@ -56,6 +56,8 @@ private:
     QPointer<QThread> m_workerThread;               // 工作线程
     WorkThread* m_worker = nullptr;                 // 工作线程对象
 
+    QPointer<QThread> m_shellThread;                // Shell 工作线程
+
     // cv::Mat* m_visionFrame = nullptr;               // 视觉算法源图
     // bool m_visionThreadSign = false;                // 视觉算法线程启动信号
 
@@ -85,6 +87,7 @@ private:
     int OnInitDatabase();                           // 数据库初始化
     int OnInitVision();                             // 视觉库初始化
     int OnInitMotion();                             // 运控模组初始化
+    int OnInitShellModule();                        // 壳模组初始化
     int OnInitLibrary();                            // 元件库初始化
     int OnInitParameter();                          // 参数表初始化
     int OnInitTableStyle();                         // 表格初始化

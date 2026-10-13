@@ -60,6 +60,9 @@
     <Filter Include="Dialog">
       <UniqueIdentifier>{06a160f7-ceda-4199-8c79-2a9c39b72455}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ShellModule">
+      <UniqueIdentifier>{6b3382bc-c1fe-4671-a6b1-bedf5d3275c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="MachineCore.qrc">
@@ -133,6 +136,12 @@
     <ClCompile Include="dialog\VisionDialog.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
+    <ClCompile Include="ShellModule.cpp">
+      <Filter>ShellModule</Filter>
+    </ClCompile>
+    <ClCompile Include="dialog\MotionTestDialog.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="WorkThread.h">
@@ -175,6 +184,12 @@
       <Filter>Dialog</Filter>
     </QtMoc>
     <QtMoc Include="dialog\VisionDialog.h">
+      <Filter>Dialog</Filter>
+    </QtMoc>
+    <QtMoc Include="ShellModule.h">
+      <Filter>ShellModule</Filter>
+    </QtMoc>
+    <QtMoc Include="dialog\MotionTestDialog.h">
       <Filter>Dialog</Filter>
     </QtMoc>
   </ItemGroup>
@@ -244,6 +259,9 @@
       <Filter>Dialog</Filter>
     </QtUic>
     <QtUic Include="dialog\VisionDialog.ui">
+      <Filter>Dialog</Filter>
+    </QtUic>
+    <QtUic Include="dialog\MotionTestDialog.ui">
       <Filter>Dialog</Filter>
     </QtUic>
   </ItemGroup>

@@ -137,20 +137,15 @@ extern "C"
 		return MOTION_RESULT_OK;
 	}
 
-    MOTIONCTRL_API int Motion_InitAxis(int axis)
+    MOTIONCTRL_API int Motion_InitAxis(int axis, double unit, double speed, double accel, double decel)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
-        {
-            return MOTION_RESULT_ERR_INVALID_PARAM;
-        }
-
         // 调用核心单例的方法
-        return MotionCore::instance().MotionCore_InitAxis(axis);
+        return MotionCore::instance().MotionCore_InitAxis(axis, unit, speed, accel, decel);
     }
 
     MOTIONCTRL_API int Motion_Enable(int axis, int enableState)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
+        if (axis < AXIS_X || axis > AXIS_H2)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
@@ -158,76 +153,83 @@ extern "C"
         return MotionCore::instance().MotionCore_SetEnable(axis, enableState);
     }
 
-    MOTIONCTRL_API int Motion_MoveAbs(int axis, float position, float speed)
+    MOTIONCTRL_API int Motion_Home(int axis, float speed, float creep, float accel, float decel)
     {
-        if (axis < AXIS_X || axis > AXIS_R) 
+        if (axis < AXIS_X || axis > AXIS_H2)
+        {
+            return MOTION_RESULT_ERR_INVALID_PARAM;
+        }
+
+        return MotionCore::instance().MotionCore_Home(axis, speed, creep, accel, decel);
+    }
+
+    MOTIONCTRL_API int Motion_MoveAbsSingle(int axis, float position)
+    {
+        if (axis < AXIS_X || axis > AXIS_H2) 
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
 
         // 补全：调用单例方法
-        return MotionCore::instance().MotionCore_MoveAbs(axis, position, speed);
+        return MotionCore::instance().MotionCore_MoveAbsSingle(axis, position);
     }
 
-    MOTIONCTRL_API int Motion_MoveRel(int axis, float distance, float speed)
+    MOTIONCTRL_API int Motion_MoveRelSingle(int axis, float distance)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
+        if (axis < AXIS_X || axis > AXIS_H2)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
 
         // 补全：调用单例方法
-        return MotionCore::instance().MotionCore_MoveRel(axis, distance, speed);
+        return MotionCore::instance().MotionCore_MoveRelSingle(axis, distance);
     }
 
-    MOTIONCTRL_API int Motion_MoveAbsXY(int x, int y, float targetX, float targetY, float speed)
-    { 
-        if (x < AXIS_X || x > AXIS_Y || y < AXIS_X || y > AXIS_Y)
+    MOTIONCTRL_API int Motion_MoveAbsMulti(int axisCount, const int* axes, const float* targets)
+    {
+        if (axisCount <= 0 || axes == nullptr || targets == nullptr)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
-        if (x == y)
-        {
-            return MOTION_RESULT_ERR_INVALID_PARAM;  // 不能是同一个轴
-        }
-        if (speed <= 0.0)
-        {
-            return MOTION_RESULT_ERR_INVALID_PARAM;  // 速度必须大于0
-        }
-        return MotionCore::instance().MotionCore_MoveAbsXY(x, y, targetX, targetY, speed);
+
+        return MotionCore::instance().MotionCore_MoveAbsMulti(axisCount, axes, targets);
     }
 
-    MOTIONCTRL_API int Motion_MoveRelXY(int x, int y, float distX, float distY, float speed)
+    MOTIONCTRL_API int Motion_MoveRelMulti(int axisCount, const int* axes, const float* distances)
     {
-        if (x < AXIS_X || x > AXIS_Y || y < AXIS_X || y > AXIS_Y)
+        if (axisCount <= 0 || axes == nullptr || distances == nullptr)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
-        if (x == y)
-        {
-            return MOTION_RESULT_ERR_INVALID_PARAM;  // 不能是同一个轴
-        }
-        if (speed <= 0.0)
-        {
-            return MOTION_RESULT_ERR_INVALID_PARAM;  // 速度必须大于0
-        }
-        return MotionCore::instance().MotionCore_MoveRelXY(x, y, distX, distY, speed);
+
+        return MotionCore::instance().MotionCore_MoveRelMulti(axisCount, axes, distances);
     }
 
-    MOTIONCTRL_API int Motion_Stop(int axis)
+    MOTIONCTRL_API int Motion_VMoveSingle(int axis, int direction, float speed)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
+        if (axis < AXIS_X || axis > AXIS_H2)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
 
         // 补全：调用单例方法
-        return MotionCore::instance().MotionCore_Stop(axis);
+        return MotionCore::instance().MotionCore_VMoveSingle(axis, direction, speed);
+    }
+
+    MOTIONCTRL_API int Motion_StopSingle(int axis, int mode)
+    {
+        if (axis < AXIS_X || axis > AXIS_H2)
+        {
+            return MOTION_RESULT_ERR_INVALID_PARAM;
+        }
+
+        // 补全：调用单例方法
+        return MotionCore::instance().MotionCore_StopSingle(axis, mode);
     }
 
     MOTIONCTRL_API int Motion_GetDpos(int axis, float* outPosition)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
+        if (axis < AXIS_X || axis > AXIS_H2)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
@@ -241,13 +243,18 @@ extern "C"
 
     MOTIONCTRL_API int Motion_GetAxisStatus(int axis, int* outStatus)
     {
-        if (axis < AXIS_X || axis > AXIS_R)
+        if (axis < AXIS_X || axis > AXIS_H2)
         {
             return MOTION_RESULT_ERR_INVALID_PARAM;
         }
 
         // 补全：调用单例方法
         return MotionCore::instance().MotionCore_GetAxisStatus(axis, outStatus);
+    }
+
+    MOTIONCTRL_API int Motion_GetInput(int ionum)
+    {
+        return MotionCore::instance().MotionCore_GetInput(ionum);
     }
 
     MOTIONCTRL_API int Motion_UninitDevice()

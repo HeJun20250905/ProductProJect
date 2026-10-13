@@ -1,6 +1,13 @@
 ﻿#pragma once
 #include <QQueue>
 #include <QMutex>
+#include <QPointF>
+
+struct MeasurePoint
+{
+	float x = 0.0f;
+	float y = 0.0f;
+};
 
 class SpatialCube
 {
@@ -32,17 +39,42 @@ public:
 	int SpatialCube_Uninit();
 
 public:
-	float m_worldZeroOffsetX = 0.0;						// 世界坐标系原点X电机偏移量
-	float m_worldZeroOffsetY = 0.0;						// 世界坐标系原点Y电机偏移量
-	float m_worldZeroOffsetZ = 0.0;						// 世界坐标系原点Z电机偏移量
+	float m_zAxisPosition_Safe = 0.0;			// Z轴安全高度
 
-	float m_pcbZeroOffsetX = 0.0;						// PCB坐标系原点X电机偏移量
-	float m_pcbZeroOffsetY = 0.0;						// PCB坐标系原点Y电机偏移量
-    float m_pcbZeroOffsetZ = 0.0;						// PCB坐标系原点Z电机偏移量
+	float m_hAxisPosition = 0.0;				// h轴目标位置
 
-	float m_feederZeroOffsetX = 0.0;					// Feeder坐标系原点X电机偏移量
-	float m_feederZeroOffsetY = 0.0;					// Feeder坐标系原点Y电机偏移量
-    float m_feederZeroOffsetZ = 0.0;					// Feeder坐标系原点Z电机偏移量
+	float m_xAxisPosition_VisionPCB = 0.0;			// x轴相机拍照目标位置
+	float m_yAxisPosition_VisionPCB = 0.0;			// y轴相机拍照目标位置
+	float m_zAxisPosition_VisionPCB = 0.0;			// z轴相机拍照目标位置
+
+	float m_xAxisPosition_VisionShell = 0.0;			// x轴相机拍照目标位置
+	float m_yAxisPosition_VisionShell = 0.0;			// y轴相机拍照目标位置
+	float m_zAxisPosition_VisionShell = 0.0;			// z轴相机拍照目标位置
+
+	float m_xAxisVisionOffset = 0.0;			// x视觉结果补偿
+    float m_yAxisVisionOffset = 0.0;			// y视觉结果补偿
+    float m_zAxisVisionOffset = 0.0;			// z视觉结果补偿
+    float m_rAxisVisionOffset = 0.0;			// r视觉结果补偿
+	
+	bool m_visionRunSign = false;				// 视觉任务运行标志
+
+	float m_xAxisPosition_PCB1 = 0.0;			// x轴PCB1目标位置
+	float m_yAxisPosition_PCB1 = 0.0;			// y轴PCB1目标位置
+	float m_zAxisPosition_PCB1 = 0.0;			// z轴PCB1目标位置
+
+	float m_xAxisPosition_PCB2 = 0.0;			// x轴PCB2目标位置
+	float m_yAxisPosition_PCB2 = 0.0;			// y轴PCB2目标位置
+	float m_zAxisPosition_PCB2 = 0.0;			// z轴PCB2目标位置
+
+	float m_xAxisPosition_Shell1 = 0.0;			// x轴Shell1目标位置
+	float m_yAxisPosition_Shell1 = 0.0;			// y轴Shell1目标位置
+	float m_zAxisPosition_Shell1 = 0.0;			// z轴Shell1目标位置
+
+	float m_xAxisPosition_Shell2 = 0.0;			// x轴Shell2目标位置
+	float m_yAxisPosition_Shell2 = 0.0;			// y轴Shell2目标位置
+	float m_zAxisPosition_Shell2 = 0.0;			// z轴Shell2目标位置
+
+	QPointF m_laserPoints[4];					// 4 个点
 
 private:
 	// 构造函数和析构函数私有化

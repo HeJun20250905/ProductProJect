@@ -1,6 +1,8 @@
 ﻿#include "MotionDialog.h"
 #include <QDebug>
 
+#include "MotionTestDialog.h"
+
 #include "../../../Include/MotionCore_Export.h"
 
 #include "SpatialCube.h"
@@ -192,6 +194,12 @@ void MotionDialog::motionDialog_visionTimer_timeout()
     ui->label_Video->setPixmap(QPixmap::fromImage(qImg));
 }
 
+void MotionDialog::on_pushButton_Test_clicked()
+{
+    MotionTestDialog motionTestDialog;
+    motionTestDialog.exec();
+}
+
 void MotionDialog::on_pushButton_Up_clicked()
 {
     //// 获取轴索引
@@ -339,65 +347,65 @@ void MotionDialog::on_pushButton_HomeZ_clicked()
 
 void MotionDialog::on_pushButton_WorldOrigin_clicked()
 {
-    // 获取世界坐标偏移量的指针
-    float& x = SpatialCube::instance().m_worldZeroOffsetX;
-    float& y = SpatialCube::instance().m_worldZeroOffsetY;
-    float& z = SpatialCube::instance().m_worldZeroOffsetZ;
+    //// 获取世界坐标偏移量的指针
+    //float& x = SpatialCube::instance().m_worldZeroOffsetX;
+    //float& y = SpatialCube::instance().m_worldZeroOffsetY;
+    //float& z = SpatialCube::instance().m_worldZeroOffsetZ;
 
-    // 读取当前电机位置
-    Motion_GetDpos(AXIS_X, &x);
-    Motion_GetDpos(AXIS_Y, &y);
-    Motion_GetDpos(AXIS_Z, &z);
+    //// 读取当前电机位置
+    //Motion_GetDpos(AXIS_X, &x);
+    //Motion_GetDpos(AXIS_Y, &y);
+    //Motion_GetDpos(AXIS_Z, &z);
 
-    // 界面显示标定结果（保留2位小数）
-    ui->label_Info->setText(QString("标定世界坐标原点: X=%1, Y=%2, Z=%3")
-        .arg(x, 0, 'f', 2)
-        .arg(y, 0, 'f', 2)
-        .arg(z, 0, 'f', 2));
+    //// 界面显示标定结果（保留2位小数）
+    //ui->label_Info->setText(QString("标定世界坐标原点: X=%1, Y=%2, Z=%3")
+    //    .arg(x, 0, 'f', 2)
+    //    .arg(y, 0, 'f', 2)
+    //    .arg(z, 0, 'f', 2));
 
-    qDebug() << "[MotionDialog] 标定世界坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
+    //qDebug() << "[MotionDialog] 标定世界坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
 }
 
 void MotionDialog::on_pushButton_PcbOrigin_clicked()
 {
-    // 获取PCB坐标偏移量的指针
-    float& x = SpatialCube::instance().m_pcbZeroOffsetX;
-    float& y = SpatialCube::instance().m_pcbZeroOffsetY;
-    float& z = SpatialCube::instance().m_pcbZeroOffsetZ;
+    //// 获取PCB坐标偏移量的指针
+    //float& x = SpatialCube::instance().m_pcbZeroOffsetX;
+    //float& y = SpatialCube::instance().m_pcbZeroOffsetY;
+    //float& z = SpatialCube::instance().m_pcbZeroOffsetZ;
 
-    // 读取当前电机位置
-    Motion_GetDpos(AXIS_X, &x);
-    Motion_GetDpos(AXIS_Y, &y);
-    Motion_GetDpos(AXIS_Z, &z);
+    //// 读取当前电机位置
+    //Motion_GetDpos(AXIS_X, &x);
+    //Motion_GetDpos(AXIS_Y, &y);
+    //Motion_GetDpos(AXIS_Z, &z);
 
-    // 界面显示标定结果（保留2位小数）
-    ui->label_Info->setText(QString("标定PCB坐标原点: X=%1, Y=%2, Z=%3")
-        .arg(x, 0, 'f', 2)
-        .arg(y, 0, 'f', 2)
-        .arg(z, 0, 'f', 2));
+    //// 界面显示标定结果（保留2位小数）
+    //ui->label_Info->setText(QString("标定PCB坐标原点: X=%1, Y=%2, Z=%3")
+    //    .arg(x, 0, 'f', 2)
+    //    .arg(y, 0, 'f', 2)
+    //    .arg(z, 0, 'f', 2));
 
-    qDebug() << "[MotionDialog] 标定PCB坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
+    //qDebug() << "[MotionDialog] 标定PCB坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
 }
 
 void MotionDialog::on_pushButton_FeederOrigin_clicked()
 {
-    // 获取Feeder坐标偏移量的指针
-    float& x = SpatialCube::instance().m_feederZeroOffsetX;
-    float& y = SpatialCube::instance().m_feederZeroOffsetY;
-    float& z = SpatialCube::instance().m_feederZeroOffsetZ;
+    //// 获取Feeder坐标偏移量的指针
+    //float& x = SpatialCube::instance().m_feederZeroOffsetX;
+    //float& y = SpatialCube::instance().m_feederZeroOffsetY;
+    //float& z = SpatialCube::instance().m_feederZeroOffsetZ;
 
-    // 读取当前电机位置
-    Motion_GetDpos(AXIS_X, &x);
-    Motion_GetDpos(AXIS_Y, &y);
-    Motion_GetDpos(AXIS_Z, &z);
+    //// 读取当前电机位置
+    //Motion_GetDpos(AXIS_X, &x);
+    //Motion_GetDpos(AXIS_Y, &y);
+    //Motion_GetDpos(AXIS_Z, &z);
 
-    // 界面显示标定结果（保留2位小数）
-    ui->label_Info->setText(QString("标定Feeder坐标原点: X=%1, Y=%2, Z=%3")
-        .arg(x, 0, 'f', 2)
-        .arg(y, 0, 'f', 2)
-        .arg(z, 0, 'f', 2));
+    //// 界面显示标定结果（保留2位小数）
+    //ui->label_Info->setText(QString("标定Feeder坐标原点: X=%1, Y=%2, Z=%3")
+    //    .arg(x, 0, 'f', 2)
+    //    .arg(y, 0, 'f', 2)
+    //    .arg(z, 0, 'f', 2));
 
-    qDebug() << "[MotionDialog] 标定Feeder坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
+    //qDebug() << "[MotionDialog] 标定Feeder坐标原点: X=" << x << ", Y=" << y << ", Z=" << z;
 }
 
 void MotionDialog::on_comboBox_Axis_currentIndexChanged(int index)
